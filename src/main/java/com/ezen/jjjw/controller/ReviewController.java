@@ -50,7 +50,7 @@ public class ReviewController {
 
     // 리뷰 게시글 삭제 DELETE /review/delete/{postId}
     @DeleteMapping(value = "/delete/{postId}")
-    public ResponseDto<?> deleteReview(@PathVariable Long postId, @RequestBody @Valid ReviewRequestDto requestDto, HttpServletRequest request) {
-        return reviewService.deleteByReviewId(postId, requestDto, request);
+    public ResponseDto<?> deleteReview(@PathVariable Long postId, HttpServletRequest request) {
+        return reviewService.deleteByReviewId(postId, request);
     }
 }
