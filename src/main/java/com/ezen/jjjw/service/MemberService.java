@@ -1,12 +1,15 @@
 package com.ezen.jjjw.service;
 
 import com.ezen.jjjw.domain.entity.Member;
+import com.ezen.jjjw.domain.entity.OutMember;
 import com.ezen.jjjw.dto.request.MemberDeleteReqDto;
 import com.ezen.jjjw.dto.request.MemberLoginReqDto;
 import com.ezen.jjjw.dto.request.MemberSignupReqDto;
 import com.ezen.jjjw.dto.response.TokenDto;
 import com.ezen.jjjw.jwt.TokenProvider;
 import com.ezen.jjjw.repository.MemberRepository;
+import com.ezen.jjjw.repository.OutMemberRepository;
+import com.ezen.jjjw.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,6 +43,10 @@ public class MemberService {
     private final PasswordEncoder passwordEncoder;
     // jwt 사용을 위해 선언
     private final TokenProvider tokenProvider;
+    //탈퇴한 회원 정보 저장
+    private final OutMemberRepository outMemberRepository;
+
+    private final RefreshTokenRepository refreshTokenRepository;
 
     // 회원가입 로직
     @Transactional
@@ -97,7 +104,15 @@ public class MemberService {
         if (!member.validatePassword(passwordEncoder, memberDeleteReqDto.getPassword())) {
             return ResponseEntity.ok("INVALID_PASSWORD");
         }
+        OutMember outMember = OutMember.builder()
+                .mId(member.getId())
+                .memberId(member.getMemberId())
+                .nickname(member.getNickname())
+                .password(passwordEncoder.encode(member.getPassword())).build();
+        outMemberRepository.save(outMember);
+        refreshTokenRepository.deleteByMemberId(member.getId());
         memberRepository.delete(member);
+
         return ResponseEntity.ok("회원탈퇴 성공");
     }
 
