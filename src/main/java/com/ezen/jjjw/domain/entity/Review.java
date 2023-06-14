@@ -42,14 +42,6 @@ public class Review extends Timestamped {
     @Column(columnDefinition = "LONGTEXT")
     private String reviewContent;
 
-//    public Review(ReviewRequestDto reviewRequestDto) {
-//        this.reviewContent = reviewRequestDto.getReviewContent();
-//    }
-
-    public boolean validateMember(Member member) {
-        return !this.bkBoard.getMember().equals(member);
-    }
-
     public void update(ReviewRequestDto reviewRequestDto) {
         this.reviewContent = reviewRequestDto.getReviewContent();
     }

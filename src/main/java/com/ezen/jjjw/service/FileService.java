@@ -1,11 +1,9 @@
 package com.ezen.jjjw.service;
 
-import com.ezen.jjjw.domain.entity.Member;
 import com.ezen.jjjw.domain.entity.Review;
 import com.ezen.jjjw.domain.entity.ReviewFile;
 import com.ezen.jjjw.dto.response.FileResponseDto;
 import com.ezen.jjjw.dto.response.ResponseDto;
-import com.ezen.jjjw.jwt.TokenProvider;
 import com.ezen.jjjw.repository.FileRepository;
 import com.ezen.jjjw.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,19 +37,9 @@ import java.util.UUID;
 public class FileService {
     private final FileRepository fileRepository;
     private final ReviewRepository reviewRepository;
-    private final TokenProvider tokenProvider;
 
     // 리뷰 파일 첨부 POST /file/create/{reviewId}
     public ResponseDto<?> createFile(Long reviewId, List<MultipartFile> multipartFiles, HttpServletRequest request) {
-        if (null == request.getHeader("Authorization")) {
-            return ResponseDto.fail("MEMBER_NOT_FOUND",
-                    "로그인이 필요합니다.");
-        }
-
-        Member member = tokenProvider.getMemberFromAuthentication();
-        if (null == member) {
-            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
-        }
 
         Review review = isPresentReview(reviewId);
         if (null == review) {
@@ -95,14 +83,6 @@ public class FileService {
         return ResponseDto.success("저장 성공");
     }
 
-    @Transactional
-    public Member validateMember(HttpServletRequest request) {
-        if (!tokenProvider.validateToken(request.getHeader("Authorization"))) {
-            return null;
-        }
-        return tokenProvider.getMemberFromAuthentication();
-    }
-
     @Transactional(readOnly = true)
     public Review isPresentReview(Long id) {
         Optional<Review> optionalReview = reviewRepository.findById(id);
@@ -111,15 +91,6 @@ public class FileService {
 
     // 리뷰 파일 상세 GET /file/detail/{reviewId}
     public ResponseDto<?> findReviewId(Long reviewId, HttpServletRequest request) {
-        if (null == request.getHeader("Authorization")) {
-            return ResponseDto.fail("MEMBER_NOT_FOUND",
-                    "로그인이 필요합니다.");
-        }
-
-        Member member = tokenProvider.getMemberFromAuthentication();
-        if (null == member) {
-            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
-        }
 
         Review review = isPresentReview(reviewId);
         if (null == review) {
@@ -148,15 +119,6 @@ public class FileService {
 
     // 리뷰 파일 수정 PUT /file/update/{reviewId}
     public ResponseDto<?> updateFile(Long reviewId, List<MultipartFile> multipartFiles, HttpServletRequest request) {
-        if (null == request.getHeader("Authorization")) {
-            return ResponseDto.fail("MEMBER_NOT_FOUND",
-                    "로그인이 필요합니다.");
-        }
-
-        Member member = tokenProvider.getMemberFromAuthentication();
-        if (null == member) {
-            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
-        }
 
         Review review = isPresentReview(reviewId);
         if (null == review) {
@@ -217,22 +179,9 @@ public class FileService {
         }
         return ResponseDto.success("수정 성공");
     }
-//        if (findFile.getReview().validateMember(member)) {
-//        return ResponseDto.fail("BAD_REQUEST", "작성자만 수정할 수 있습니다.");
-//        }
-
 
     // 리뷰 파일 삭제 POST /file/delete/{reviewId}
     public ResponseDto<?> deleteByFileId(Long reviewId, List<MultipartFile> multipartFiles, HttpServletRequest request) {
-        if (null == request.getHeader("Authorization")) {
-            return ResponseDto.fail("MEMBER_NOT_FOUND",
-                    "로그인이 필요합니다.");
-        }
-
-        Member member = tokenProvider.getMemberFromAuthentication();
-        if (null == member) {
-            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
-        }
 
         Review review = isPresentReview(reviewId);
         if (null == review) {
@@ -259,10 +208,6 @@ public class FileService {
                 return ResponseDto.fail("ERROR", "폴더 삭제 실패");
             }
         }
-
-//        if (findReviewFile.getReview().validateMember(member)) {
-//            return ResponseDto.fail("BAD_REQUEST", "작성자만 삭제할 수 있습니다.");
-//        }
         return ResponseDto.success("delete success");
     }
 }
