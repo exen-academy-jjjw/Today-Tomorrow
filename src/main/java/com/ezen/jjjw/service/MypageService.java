@@ -41,7 +41,7 @@ public class MypageService {
         Member member = tokenProvider.getMemberFromAuthentication();
         Member memberPassword = memberRepository.findById(member.getId()).orElseThrow(() -> new RuntimeException("유저가 없습니다"));
         if(!passwordEncoder.matches(request.getPassword(), memberPassword.getPassword())){
-            return "INVALID_TOKEN";
+            return "INVALID_PASSWORD";
         }
         memberPassword.updatePassword(passwordEncoder, request);
         memberRepository.save(memberPassword);
