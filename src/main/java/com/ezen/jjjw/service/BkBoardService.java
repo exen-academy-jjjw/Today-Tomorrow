@@ -52,25 +52,6 @@ public class BkBoardService {
     }
 
 
-
-//    @Transactional
-//    public Object create(BkBoardDto.Request bkrequest, HttpServletRequest request) {
-//
-//        // 로그인한 멤버의 ID 가져오기
-//        String memberId = tokenProvider.getLoggedInMemberId(request);
-//        Optional<Member> optionalMember = Optional.ofNullable((Member) (Member) memberRepository.getByMemberId(memberId));
-//        if (optionalMember.isEmpty()) {
-//            ResponseDto.fail("member_not_found", "회원을 찾을 수 없습니다.");
-//            return null;
-//        }
-//        Member member = optionalMember.get();
-//        bkrequest.setMemberId(member.getMemberId());
-//
-//        BkBoard bkBoard = bkrequest.toEntity(member);
-//        bkBoardRepository.save(bkBoard);
-//
-//        return bkBoard.getPostid();
-//    }
     @Transactional
     public ResponseEntity<?> create(BkBoardDto.Request bkrequest) {
         Member member = tokenProvider.getMemberFromAuthentication();

@@ -4,7 +4,6 @@ package com.ezen.jjjw.controller;
 
 
 import com.ezen.jjjw.domain.entity.BkBoard;
-import com.ezen.jjjw.domain.entity.Member;
 import com.ezen.jjjw.dto.BkBoardDto;
 import com.ezen.jjjw.dto.response.ResponseDto;
 import com.ezen.jjjw.service.BkBoardService;
@@ -14,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.net.URI;
 import java.util.List;
 
 
