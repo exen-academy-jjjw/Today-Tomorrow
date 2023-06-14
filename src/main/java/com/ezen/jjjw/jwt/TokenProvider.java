@@ -45,7 +45,7 @@ import java.util.Optional;
 public class TokenProvider {
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_PREFIX = "Bearer ";
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 5000;            //30분
+    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;            //30분
     private static final long REFRESH_TOKEN_EXPRIRE_TIME = 1000 * 60 * 60 * 24 * 7;     //7일
     private final Key key;
 
@@ -197,6 +197,25 @@ public class TokenProvider {
         String bearerToken = (request.getHeader("Authorization"));
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7);
+        }
+        return null;
+    }
+
+    // delete 확인
+    public String getMemberIdFromToken(String token) {
+        Claims claims = Jwts.parser()
+                .setSigningKey(key)
+                .parseClaimsJws(token)
+                .getBody();
+
+        return claims.getSubject();
+    }
+
+    // 현재 로그인한 멤버의 ID를 추출하여 반환
+    public String getLoggedInMemberId(HttpServletRequest request) {
+        String token = resolveToken(request);
+        if (StringUtils.hasText(token)) {
+            return getClaimsMemberId(token);
         }
         return null;
     }
