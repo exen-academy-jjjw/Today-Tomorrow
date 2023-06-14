@@ -1,13 +1,11 @@
 package com.ezen.jjjw.service;
 
 import com.ezen.jjjw.domain.entity.BkBoard;
-import com.ezen.jjjw.domain.entity.Member;
 import com.ezen.jjjw.domain.entity.Review;
 import com.ezen.jjjw.domain.entity.ReviewFile;
 import com.ezen.jjjw.dto.request.ReviewRequestDto;
 import com.ezen.jjjw.dto.response.ResponseDto;
 import com.ezen.jjjw.dto.response.ReviewResponseDto;
-import com.ezen.jjjw.jwt.TokenProvider;
 import com.ezen.jjjw.repository.BkBoardRepository;
 import com.ezen.jjjw.repository.FileRepository;
 import com.ezen.jjjw.repository.ReviewRepository;
@@ -39,21 +37,11 @@ import java.util.Optional;
 @Slf4j
 public class ReviewService {
     private final ReviewRepository reviewRepository;
-    private final TokenProvider tokenProvider;
     private final BkBoardRepository bkBoardRepository;
     private final FileRepository fileRepository;
 
     // 리뷰 게시글 작성 POST /review/create/{postId}
     public ResponseDto<?> createReview(Long postId, ReviewRequestDto reviewRequestDto, HttpServletRequest request) {
-        if (null == request.getHeader("Authorization")) {
-            return ResponseDto.fail("MEMBER_NOT_FOUND",
-                    "로그인이 필요합니다.");
-        }
-
-        Member member = tokenProvider.getMemberFromAuthentication();
-        if (null == member) {
-            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
-        }
 
         BkBoard bkBoard = isPresentPost(postId);
         if (null == bkBoard) {
@@ -82,14 +70,6 @@ public class ReviewService {
         );
     }
 
-    @Transactional
-    public Member validateMember(HttpServletRequest request) {
-        if (!tokenProvider.validateToken(request.getHeader("Authorization"))) {
-            return null;
-        }
-        return tokenProvider.getMemberFromAuthentication();
-    }
-
     @Transactional(readOnly = true)
     public BkBoard isPresentPost(Long id) {
         Optional<BkBoard> optionalPost = bkBoardRepository.findById(id);
@@ -99,15 +79,6 @@ public class ReviewService {
     // 리뷰 게시글 상세 GET /review/detail/{postId}
     @Transactional(readOnly = true)
     public ResponseDto<?> findByPostId(Long postId, HttpServletRequest request) {
-        if (null == request.getHeader("Authorization")) {
-            return ResponseDto.fail("MEMBER_NOT_FOUND",
-                    "로그인이 필요합니다.");
-        }
-
-        Member member = tokenProvider.getMemberFromAuthentication();
-        if (null == member) {
-            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
-        }
 
         BkBoard bkBoard = isPresentPost(postId);
         if (null == bkBoard) {
@@ -140,15 +111,6 @@ public class ReviewService {
 
     // 리뷰 게시글 수정 PUT /review/update/{postId}
     public ResponseDto<?> updateSave(Long postId, ReviewRequestDto requestDto, HttpServletRequest request) {
-        if (null == request.getHeader("Authorization")) {
-            return ResponseDto.fail("MEMBER_NOT_FOUND",
-                    "로그인이 필요합니다.");
-        }
-
-        Member member = tokenProvider.getMemberFromAuthentication();
-        if (null == member) {
-            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
-        }
 
         BkBoard bkBoard = isPresentPost(postId);
         if (null == bkBoard) {
@@ -158,10 +120,6 @@ public class ReviewService {
         Review findReview = bkBoard.getReview();
         if(findReview == null) {
             return ResponseDto.fail("NOT_FOUND", "존재하지 않는 리뷰 id 입니다.");
-        }
-
-        if (findReview.validateMember(member)) {
-            return ResponseDto.fail("BAD_REQUEST", "작성자만 수정할 수 있습니다.");
         }
 
         findReview.update(requestDto);
@@ -179,16 +137,7 @@ public class ReviewService {
     }
 
     // 리뷰 게시글 삭제 DELETE /review/delete/{postId}
-    public ResponseDto<?> deleteByReviewId(Long postId, ReviewRequestDto requestDto, HttpServletRequest request) {
-        if (null == request.getHeader("Authorization")) {
-            return ResponseDto.fail("MEMBER_NOT_FOUND",
-                    "로그인이 필요합니다.");
-        }
-
-        Member member = tokenProvider.getMemberFromAuthentication();
-        if (null == member) {
-            return ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
-        }
+    public ResponseDto<?> deleteByReviewId(Long postId, HttpServletRequest request) {
 
         BkBoard bkBoard = isPresentPost(postId);
         if (null == bkBoard) {
@@ -198,10 +147,6 @@ public class ReviewService {
         Review findReview = bkBoard.getReview();
         if(findReview == null) {
             return ResponseDto.fail("NOT_FOUND", "존재하지 않는 리뷰 id 입니다.");
-        }
-
-        if (findReview.validateMember(member)) {
-            return ResponseDto.fail("BAD_REQUEST", "작성자만 수정할 수 있습니다.");
         }
 
         reviewRepository.delete(findReview);
