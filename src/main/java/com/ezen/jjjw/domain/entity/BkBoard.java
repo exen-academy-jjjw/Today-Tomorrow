@@ -1,6 +1,7 @@
 package com.ezen.jjjw.domain.entity;
 
 
+import com.ezen.jjjw.dto.BkBoardDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
