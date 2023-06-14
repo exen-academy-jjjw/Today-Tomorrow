@@ -37,6 +37,9 @@ public class BkBoard extends Timestamped {
         @Column(unique = false)
         private String content;
 
+        @OneToOne(mappedBy = "bkBoard", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+        private Review review;
+
         public BkBoard(BkBoardDto bkBoardDto) {
                 this.postid = bkBoardDto.getPostId();
                 this.content = bkBoardDto.getContent();
