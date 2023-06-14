@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Getter
 public class BkBoardDto {
 
-    private Long memberid; // 유저 식별자
+    private Long memberId; // 유저 식별자
     private Long postId; // 게시판 식별자
     private String category; // 카테고리
     private String title;  // 제목
@@ -22,12 +22,6 @@ public class BkBoardDto {
     private LocalDateTime createAt; // 생성일자
     private LocalDateTime modifiedAt; // 수정일자
 
-//    public static class Response{
-//        private Long post_id;
-//        private String content;
-//        private String title;
-//
-//    }
     @Getter
     @NoArgsConstructor
     public static class Request {
@@ -70,10 +64,9 @@ public class BkBoardDto {
         private LocalDateTime modifiedAt; // 수정일자
 
         @Builder
-        public Response(Long postid, String category, String title, String content, LocalDateTime createdAt, LocalDateTime modifiedAt, String memberId) {
+        public Response(Long postId, String category, String title, String content, LocalDateTime createdAt, LocalDateTime modifiedAt, String memberId) {
 
-
-            this.postId = postid;
+            this.postId = postId;
             this.category = category;
             this.title = title;
             this.content = content;
@@ -87,7 +80,7 @@ public class BkBoardDto {
 
         public static Response of(BkBoard bkBoard) {
             return builder()
-                    .postid(bkBoard.getPostId())
+                    .postId(bkBoard.getPostId())
                     .title(bkBoard.getTitle())
                     .content(bkBoard.getContent())
                     .createdAt(bkBoard.getCreatedAt())
