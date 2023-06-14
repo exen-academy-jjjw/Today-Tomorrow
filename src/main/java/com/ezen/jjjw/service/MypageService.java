@@ -22,15 +22,6 @@ public class MypageService {
     private final TokenProvider tokenProvider;
 
     //맴버 정보 조회
-//    public MypageResponseDto getFindMember() {
-//        Member member = tokenProvider.getMemberFromAuthentication();
-//
-//        MypageResponseDto memberInfo = MypageResponseDto.builder()
-//                .nickname(member.getNickname())
-//                .build();
-//
-//        return memberInfo;
-//    }
     @Transactional
     public ResponseEntity<MypageResponseDto> getFindMember() {
         Member member = tokenProvider.getMemberFromAuthentication();
@@ -41,13 +32,6 @@ public class MypageService {
     }
 
     //닉네임 변경
-//    public void updateNick(MypageRequestDto request) {
-//        Member member = tokenProvider.getMemberFromAuthentication();
-//        Member memberName = memberRepository.findById(member.getId()).orElseThrow(() -> new RuntimeException("유저가 없습니다"));
-//
-//        memberName.updateNickname(request);
-//        memberRepository.save(memberName);
-//    }
     @Transactional
     public ResponseEntity<String> updateNick(MypageRequestDto request) {
         Member member = tokenProvider.getMemberFromAuthentication();
@@ -59,16 +43,6 @@ public class MypageService {
         return ResponseEntity.ok("변경 완료되었습니다");
     }
 
-//    public String updatePassword(MypageRequestDto request) {
-//        Member member = tokenProvider.getMemberFromAuthentication();
-//        Member memberPassword = memberRepository.findById(member.getId()).orElseThrow(() -> new RuntimeException("유저가 없습니다"));
-//        if(!passwordEncoder.matches(request.getPassword(), memberPassword.getPassword())){
-//            return "INVALID_PASSWORD";
-//        }
-//        memberPassword.updatePassword(passwordEncoder, request);
-//        memberRepository.save(memberPassword);
-//        return "비밀번호 변경이 완료되었습니다";
-//    }
     @Transactional
     public ResponseEntity<String> updatePassword(MypageRequestDto request) {
         Member member = tokenProvider.getMemberFromAuthentication();

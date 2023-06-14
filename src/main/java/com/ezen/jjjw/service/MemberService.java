@@ -51,26 +51,6 @@ public class MemberService {
     private final RefreshTokenRepository refreshTokenRepository;
 
     // 회원가입 로직
-//    @Transactional
-//    public ResponseEntity<?> createMember(MemberSignupReqDto memberSignupReqDto) {
-//        // 사용자로부터 입력받은 memberId로 DB에 같은 아이디가 있는지 확인
-//        if (null != isPresentMember(memberSignupReqDto.getMemberId())) {
-//            return ResponseEntity.ok("DUPLICATED_ID");
-//        }
-//
-//        // 비밀번호와 비밀번호 확인의 값이 서로 일치하는지 확인
-//        if (!memberSignupReqDto.getPassword().equals(memberSignupReqDto.getPasswordConfirm())) {
-//            return ResponseEntity.ok("PASSWORDS_NOT_MATCHED");
-//        }
-//
-//        Member member = Member.builder()
-//                .memberId(memberSignupReqDto.getMemberId())
-//                .nickname(memberSignupReqDto.getNickname())
-//                .password(passwordEncoder.encode(memberSignupReqDto.getPassword()))
-//                .build();
-//        memberRepository.save(member);
-//        return ResponseEntity.ok("회원가입 성공");
-//    }
     @Transactional
     public ResponseEntity<String> createMember(MemberSignupReqDto memberSignupReqDto) {
         // 사용자로부터 입력받은 memberId로 DB에 같은 아이디가 있는지 확인
@@ -113,12 +93,6 @@ public class MemberService {
     }
 
     // 로그아웃 로직
-//    @Transactional
-//    public ResponseEntity<?> logout(Member member) {
-//        tokenProvider.deleteRefreshToken(member);
-//        System.out.println("삭제 완료");
-//        return ResponseEntity.ok("로그아웃 성공");
-//    }
     @Transactional
     public ResponseEntity<String> logout(Member member) {
         tokenProvider.deleteRefreshToken(member);
@@ -126,22 +100,6 @@ public class MemberService {
     }
 
     // 회원 탈퇴 로직
-//    @Transactional
-//    public ResponseEntity<?> delete(MemberDeleteReqDto memberDeleteReqDto, Member member) {
-//        if (!member.validatePassword(passwordEncoder, memberDeleteReqDto.getPassword())) {
-//            return ResponseEntity.ok("INVALID_PASSWORD");
-//        }
-//        OutMember outMember = OutMember.builder()
-//                .mId(member.getId())
-//                .memberId(member.getMemberId())
-//                .nickname(member.getNickname())
-//                .password(passwordEncoder.encode(member.getPassword())).build();
-//        outMemberRepository.save(outMember);
-//        refreshTokenRepository.deleteByMemberId(member.getId());
-//        memberRepository.delete(member);
-//
-//        return ResponseEntity.ok("회원탈퇴 성공");
-//    }
     @Transactional
     public ResponseEntity<String> delete(MemberDeleteReqDto memberDeleteReqDto, Member member) {
         if (!member.validatePassword(passwordEncoder, memberDeleteReqDto.getPassword())) {

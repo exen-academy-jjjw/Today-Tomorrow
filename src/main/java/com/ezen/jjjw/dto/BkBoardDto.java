@@ -22,12 +22,6 @@ public class BkBoardDto {
     private LocalDateTime createAt; // 생성일자
     private LocalDateTime modifiedAt; // 수정일자
 
-//    public static class Response{
-//        private Long post_id;
-//        private String content;
-//        private String title;
-//
-//    }
     @Getter
     @NoArgsConstructor
     public static class Request {
