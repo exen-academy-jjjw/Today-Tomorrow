@@ -25,12 +25,7 @@ import java.util.List;
 public class BkBoardController {
     private  final BkBoardService bkBoardService;
 
-    // create
-//    @PostMapping("/create")
-//    public ResponseEntity<Void> create(@RequestBody BkBoardDto.Request bkrequest, HttpServletRequest request) {
-//        Object postid = bkBoardService.create(bkrequest, request);
-//        return ResponseEntity.created(URI.create("/"+postid)).build();
-//    }
+
     @PostMapping("/create")
     public ResponseEntity<?> create(@RequestBody BkBoardDto.Request bkrequest) {
         return bkBoardService.create(bkrequest);
