@@ -21,7 +21,7 @@ public class BkBoard extends Timestamped {
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         @Column(name = "postId")
-        private Long postid;
+        private Long postId;
 
         @ManyToOne(fetch = FetchType.LAZY)
         @JoinColumn(name = "memberId")
@@ -41,7 +41,7 @@ public class BkBoard extends Timestamped {
         private Review review;
 
         public BkBoard(BkBoardDto bkBoardDto) {
-                this.postid = bkBoardDto.getPostId();
+                this.postId = bkBoardDto.getPostId();
                 this.content = bkBoardDto.getContent();
                 this.title = bkBoardDto.getTitle();
                 this.category = bkBoardDto.getCategory();
