@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class BkBoardDto {
 
     private Long memberid; // 유저 식별자
-    private Long postid; // 게시판 식별자
+    private Long postId; // 게시판 식별자
     private String category; // 카테고리
     private String title;  // 제목
     private String content;  // 내용
@@ -32,14 +32,14 @@ public class BkBoardDto {
     @NoArgsConstructor
     public static class Request {
         private String memberId;
-        private Long postid; // 게시판 식별자
+        private Long postId; // 게시판 식별자
         private String category; // 카테고리
         private String title;  // 제목
         private String content;  // 내용
 
         @Builder
         public void Request(Long post_id, String category, String title, String content) {
-            this.postid = post_id;
+            this.postId = post_id;
             this.category = category;
             this.title = title;
             this.content = content;
@@ -48,6 +48,7 @@ public class BkBoardDto {
         public BkBoard toEntity(Member member) {
             return BkBoard.builder()
                     .member(member)
+                    .postid(postId)
                     .category(category)
                     .title(title)
                     .content(content)
@@ -61,7 +62,7 @@ public class BkBoardDto {
     @Getter
     @NoArgsConstructor
     public static class Response {
-        private Long postid; // 게시판 식별자
+        private Long postId; // 게시판 식별자
         private String category; // 카테고리
         private String title;  // 제목
         private String content;  // 내용
@@ -72,7 +73,7 @@ public class BkBoardDto {
         public Response(Long postid, String category, String title, String content, LocalDateTime createdAt, LocalDateTime modifiedAt, String memberId) {
 
 
-            this.postid = postid;
+            this.postId = postid;
             this.category = category;
             this.title = title;
             this.content = content;
