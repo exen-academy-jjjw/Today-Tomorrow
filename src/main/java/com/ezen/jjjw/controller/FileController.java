@@ -1,8 +1,10 @@
 package com.ezen.jjjw.controller;
 
+import com.ezen.jjjw.dto.response.FileResponseDto;
 import com.ezen.jjjw.dto.response.ResponseDto;
 import com.ezen.jjjw.service.FileService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,28 +31,45 @@ public class FileController {
     private final FileService fileService;
 
     // 리뷰 파일 첨부 POST /file/create/{reviewId}
+//    @PostMapping(value = "/create/{reviewId}")
+//    public ResponseDto<?> createFile(@PathVariable Long reviewId,
+//                                     @RequestParam(value = "fileUrl", required = false) List<MultipartFile> multipartFiles, HttpServletRequest request) {
+//        return fileService.createFile(reviewId, multipartFiles,  request);
+//    }
     @PostMapping(value = "/create/{reviewId}")
-    public ResponseDto<?> createFile(@PathVariable Long reviewId,
-                                     @RequestParam(value = "fileUrl", required = false) List<MultipartFile> multipartFiles, HttpServletRequest request) {
-        return fileService.createFile(reviewId, multipartFiles,  request);
+    public ResponseEntity<String> createFile(@PathVariable Long reviewId,
+                                        @RequestParam(value = "fileUrl", required = false) List<MultipartFile> multipartFiles) {
+        return fileService.createFile(reviewId, multipartFiles);
     }
 
     // 리뷰 파일 상세 GET /file/detail/{reviewId}
+//    @GetMapping(value = "/detail/{reviewId}")
+//    public ResponseDto<?> detailFile(@PathVariable Long reviewId, HttpServletRequest request) {
+//        return fileService.findReviewId(reviewId, request);
+//    }
     @GetMapping(value = "/detail/{reviewId}")
-    public ResponseDto<?> detailFile(@PathVariable Long reviewId, HttpServletRequest request) {
-        return fileService.findReviewId(reviewId, request);
+    public ResponseEntity<List<FileResponseDto>> detailFile(@PathVariable Long reviewId) {
+        return fileService.findReviewId(reviewId);
     }
 
     // 리뷰 파일 수정 PUT /file/update/{reviewId}
+//    @PutMapping(value = "/update/{reviewId}")
+//    public ResponseDto<?> updateFile(@PathVariable Long reviewId, @RequestParam("fileUrl") List<MultipartFile> multipartFiles, HttpServletRequest request) {
+//        return fileService.updateFile(reviewId, multipartFiles, request);
+//    }
     @PutMapping(value = "/update/{reviewId}")
-    public ResponseDto<?> updateFile(@PathVariable Long reviewId, @RequestParam("fileUrl") List<MultipartFile> multipartFiles, HttpServletRequest request) {
-        return fileService.updateFile(reviewId, multipartFiles, request);
+    public ResponseEntity<String> updateFile(@PathVariable Long reviewId, @RequestParam("fileUrl") List<MultipartFile> multipartFiles) {
+        return fileService.updateFile(reviewId, multipartFiles);
     }
 
     // 리뷰 파일 삭제 POST /file/delete/{reviewId}
+//    @DeleteMapping(value = "/delete/{reviewId}")
+//    public ResponseDto<?> deleteFile(@PathVariable Long reviewId, @RequestParam("fileUrl") List<MultipartFile> multipartFiles, HttpServletRequest request) {
+//        return fileService.deleteByFileId(reviewId, multipartFiles, request);
+//    }
     @DeleteMapping(value = "/delete/{reviewId}")
-    public ResponseDto<?> deleteFile(@PathVariable Long reviewId, @RequestParam("fileUrl") List<MultipartFile> multipartFiles, HttpServletRequest request) {
-        return fileService.deleteByFileId(reviewId, multipartFiles, request);
+    public ResponseEntity<String> deleteFile(@PathVariable Long reviewId) {
+        return fileService.deleteByFileId(reviewId);
     }
 
 }

@@ -29,8 +29,12 @@ public class JwtController {
 
     private final JwtService jwtService;
 
+//    @PostMapping(value = "/reissue")
+//    public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
+//        return jwtService.reissue(request, response);
+//    }
     @PostMapping(value = "/reissue")
-    public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<String> reissue(HttpServletRequest request, HttpServletResponse response) {
         return jwtService.reissue(request, response);
     }
 }
