@@ -32,21 +32,15 @@ public class BkBoardService {
 
 
     public List<BkBoard> getAllBkBoardDto(HttpServletRequest request) {
-        if (!tokenProvider.validateToken(tokenProvider.resolveToken(request))) {
-            String errorMessage = "Token이 유효하지 않습니다.";
-
-            return (List<BkBoard>) ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorMessage);
-        }
         return bkBoardRepository.findAll();
+    }
+
+    public BkBoard getBkBoardById(Long postId) {
+        return bkBoardRepository.findById(postId).orElse(null);
     }
 
     @Transactional
     public Object create(BkBoardDto.Request bkrequest, HttpServletRequest request) {
-
-        if (!tokenProvider.validateToken(tokenProvider.resolveToken(request))) {
-            ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
-            return null;
-        }
 
         // 로그인한 멤버의 ID 가져오기
         String memberId = tokenProvider.getLoggedInMemberId(request);
@@ -80,11 +74,6 @@ public class BkBoardService {
     public void delete(Long postid, HttpServletRequest request) {
         String loggedInMemberId = tokenProvider.getMemberIdFromToken(tokenProvider.resolveToken(request));
 
-        // 토큰 유효성 검증
-        if (!tokenProvider.validateToken(tokenProvider.resolveToken(request))) {
-            ResponseDto.fail("INVALID_TOKEN", "Token이 유효하지 않습니다.");
-            return;
-        }
 
         BkBoard bkBoard = bkBoardRepository.findById(postid).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
 

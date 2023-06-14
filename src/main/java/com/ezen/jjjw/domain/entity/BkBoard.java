@@ -20,7 +20,7 @@ public class BkBoard extends Timestamped {
 
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Column(name = "postid")
+        @Column(name = "postId")
         private Long postid;
 
         @ManyToOne(fetch = FetchType.LAZY)

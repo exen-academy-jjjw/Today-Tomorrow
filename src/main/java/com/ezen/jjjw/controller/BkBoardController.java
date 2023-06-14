@@ -57,4 +57,13 @@ public class BkBoardController {
         bkBoardService.delete(postId, request);
     }
 
+    @GetMapping("/detail/{postId}")
+    public ResponseEntity<Object> detail(@PathVariable("postId") Long postId, HttpServletRequest request) {
+        BkBoard bkBoard = bkBoardService.getBkBoardById(postId);
+        if (bkBoard == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok().body(bkBoard);
+    }
+
 }

@@ -9,6 +9,8 @@ import org.hibernate.Hibernate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -53,6 +55,9 @@ public class Member extends Timestamped {
     // 하나의 계정은 하나의 토큰을 가지고 있을 수 있으며 계정이 삭제될 경우 토큰도 함께 삭제된다
     @OneToOne(mappedBy = "member", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private RefreshToken refreshTokenList = new RefreshToken();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<BkBoard> bkBoardList = new ArrayList<>();
 
     // DB에 들어있는 비밀번호와 입력받은 비밀번호의 일치 여부를 확인할 때 사용
     public boolean validatePassword(PasswordEncoder passwordEncoder, String password) {
