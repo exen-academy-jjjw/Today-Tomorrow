@@ -41,7 +41,7 @@ public class BkBoardService {
         return ResponseEntity.ok(bkBoardList);
     }
 
-    public ResponseEntity<List<BkBoard>> findAllbyMemberIdAndCategory(String category) {
+    public ResponseEntity<List<BkBoard>> findAllByMemberIdAndCategory(String category) {
         Member member = tokenProvider.getMemberFromAuthentication();
         List<BkBoard> bkBoardList = bkBoardRepository.findAllByMemberIdAndCategory(member.getId(), category);
         return ResponseEntity.ok(bkBoardList);
@@ -63,9 +63,9 @@ public class BkBoardService {
 
 
     @Transactional
-    public ResponseDto<Object> update(Long postid, BkBoardDto.Request bkrequest) {
+    public ResponseDto<Object> update(Long postId, BkBoardDto.Request bkrequest) {
 
-        BkBoard bkBoard = bkBoardRepository.findById(postid).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
+        BkBoard bkBoard = bkBoardRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
 
         bkBoard.update(bkrequest);
         bkBoardRepository.save(bkBoard);
@@ -74,11 +74,11 @@ public class BkBoardService {
     }
 
     @Transactional
-    public void delete(Long postid, HttpServletRequest request) {
+    public void delete(Long postId, HttpServletRequest request) {
         String loggedInMemberId = tokenProvider.getMemberIdFromToken(tokenProvider.resolveToken(request));
 
 
-        BkBoard bkBoard = bkBoardRepository.findById(postid).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
+        BkBoard bkBoard = bkBoardRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
 
         // 작성자의 memberId와 로그인한 사용자의 memberId 비교
         if (!bkBoard.getMember().getMemberId().equals(loggedInMemberId)) {
@@ -86,7 +86,7 @@ public class BkBoardService {
             return;
         }
 
-        bkBoardRepository.deleteById(postid);
+        bkBoardRepository.deleteById(postId);
     }
 
 }

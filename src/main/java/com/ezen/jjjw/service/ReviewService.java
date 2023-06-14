@@ -62,7 +62,7 @@ public class ReviewService {
         return ResponseDto.success(
                 ReviewResponseDto.builder()
                         .id(review.getId())
-                        .postId(review.getBkBoard().getPostid())
+                        .postId(review.getBkBoard().getPostId())
                         .reviewContent(review.getReviewContent())
                         .createdAt(review.getCreatedAt())
                         .modifiedAt(review.getModifiedAt())
@@ -100,7 +100,7 @@ public class ReviewService {
             return ResponseDto.success(
                     ReviewResponseDto.builder()
                             .id(findReview.getId())
-                            .postId(findReview.getBkBoard().getPostid())
+                            .postId(findReview.getBkBoard().getPostId())
                             .fileUrlList(imageList)
                             .reviewContent(findReview.getReviewContent())
                             .createdAt(findReview.getCreatedAt())
@@ -128,7 +128,7 @@ public class ReviewService {
         return ResponseDto.success(
                 ReviewResponseDto.builder()
                         .id(findReview.getId())
-                        .postId(findReview.getBkBoard().getPostid())
+                        .postId(findReview.getBkBoard().getPostId())
                         .reviewContent(findReview.getReviewContent())
                         .createdAt(findReview.getCreatedAt())
                         .modifiedAt(findReview.getModifiedAt())

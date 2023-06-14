@@ -49,9 +49,9 @@ public class BkBoardController {
 
 
     @GetMapping("/list/{category}")
-    public ResponseEntity<List<BkBoard>> findAllbyMemberIdAndCategory(@PathVariable String category){
+    public ResponseEntity<List<BkBoard>> findAllByMemberIdAndCategory(@PathVariable String category){
 
-        return bkBoardService.findAllbyMemberIdAndCategory(category);
+        return bkBoardService.findAllByMemberIdAndCategory(category);
     }
 
     // delete

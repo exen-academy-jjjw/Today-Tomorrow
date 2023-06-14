@@ -38,8 +38,8 @@ public class BkBoardDto {
         private String content;  // 내용
 
         @Builder
-        public void Request(Long post_id, String category, String title, String content) {
-            this.postId = post_id;
+        public void Request(Long postId, String category, String title, String content) {
+            this.postId = postId;
             this.category = category;
             this.title = title;
             this.content = content;
@@ -48,7 +48,7 @@ public class BkBoardDto {
         public BkBoard toEntity(Member member) {
             return BkBoard.builder()
                     .member(member)
-                    .postid(postId)
+                    .postId(postId)
                     .category(category)
                     .title(title)
                     .content(content)
@@ -87,7 +87,7 @@ public class BkBoardDto {
 
         public static Response of(BkBoard bkBoard) {
             return builder()
-                    .postid(bkBoard.getPostid())
+                    .postid(bkBoard.getPostId())
                     .title(bkBoard.getTitle())
                     .content(bkBoard.getContent())
                     .createdAt(bkBoard.getCreatedAt())
