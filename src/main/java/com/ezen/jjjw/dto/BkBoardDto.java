@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class BkBoardDto {
 
     private Long memberid; // 유저 식별자
-    private Long postid; // 게시판 식별자
+    private Long postId; // 게시판 식별자
     private String category; // 카테고리
     private String title;  // 제목
     private String content;  // 내용
@@ -48,6 +48,7 @@ public class BkBoardDto {
         public BkBoard toEntity(Member member) {
             return BkBoard.builder()
                     .member(member)
+                    .postid(postId)
                     .category(category)
                     .title(title)
                     .content(content)

@@ -38,7 +38,7 @@ public class BkBoard extends Timestamped {
         private String content;
 
         public BkBoard(BkBoardDto bkBoardDto) {
-                this.postid = bkBoardDto.getPostid();
+                this.postid = bkBoardDto.getPostId();
                 this.content = bkBoardDto.getContent();
                 this.title = bkBoardDto.getTitle();
                 this.category = bkBoardDto.getCategory();

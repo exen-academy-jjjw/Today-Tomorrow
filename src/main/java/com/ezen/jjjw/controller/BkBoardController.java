@@ -4,6 +4,7 @@ package com.ezen.jjjw.controller;
 
 
 import com.ezen.jjjw.domain.entity.BkBoard;
+import com.ezen.jjjw.domain.entity.Member;
 import com.ezen.jjjw.dto.BkBoardDto;
 import com.ezen.jjjw.dto.response.ResponseDto;
 import com.ezen.jjjw.service.BkBoardService;
@@ -20,21 +21,24 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/bkBoard")
+@RequestMapping("/post")
 public class BkBoardController {
     private  final BkBoardService bkBoardService;
 
-
     // create
+//    @PostMapping("/create")
+//    public ResponseEntity<Void> create(@RequestBody BkBoardDto.Request bkrequest, HttpServletRequest request) {
+//        Object postid = bkBoardService.create(bkrequest, request);
+//        return ResponseEntity.created(URI.create("/"+postid)).build();
+//    }
     @PostMapping("/create")
-    public ResponseEntity<Void> create(@RequestBody BkBoardDto.Request bkrequest, HttpServletRequest request) {
-        Object postid = bkBoardService.create(bkrequest, request);
-        return ResponseEntity.created(URI.create("/"+postid)).build();
+    public ResponseEntity<?> create(@RequestBody BkBoardDto.Request bkrequest) {
+        return bkBoardService.create(bkrequest);
     }
 
 
     // update
-    @PutMapping("/{postId}")
+    @PutMapping("/update/{postId}")
     public ResponseEntity<ResponseDto<Object>> update(@PathVariable("postId") Long postId, @RequestBody BkBoardDto.Request bkrequest) {
         log.info("postId = {}", postId);
         ResponseDto<Object> response = bkBoardService.update(postId, bkrequest);
@@ -45,14 +49,20 @@ public class BkBoardController {
 
     // list
     @GetMapping("/list")
-    public ResponseEntity<List<BkBoard>> getAllBkBoardDto(HttpServletRequest request){
+    public ResponseEntity<List<BkBoard>> getAllBkBoardDto(){
+        System.out.println("진입확인");
+        return bkBoardService.getAllBkBoardDto();
+    }
 
-        log.info("post count = {}", bkBoardService.getAllBkBoardDto(request).size());
-        return ResponseEntity.ok().body(bkBoardService.getAllBkBoardDto(request));
+
+    @GetMapping("/list/{category}")
+    public ResponseEntity<List<BkBoard>> findAllbyMemberIdAndCategory(@PathVariable String category){
+
+        return bkBoardService.findAllbyMemberIdAndCategory(category);
     }
 
     // delete
-    @DeleteMapping("/{postId}")
+    @DeleteMapping("/delete/{postId}")
     public void delete(@PathVariable("postId") Long postId, HttpServletRequest request) {
         bkBoardService.delete(postId, request);
     }
@@ -65,5 +75,8 @@ public class BkBoardController {
         }
         return ResponseEntity.ok().body(bkBoard);
     }
+
+
+
 
 }
