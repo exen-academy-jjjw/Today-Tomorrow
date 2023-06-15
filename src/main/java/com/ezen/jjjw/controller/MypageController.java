@@ -24,13 +24,13 @@ public class MypageController {
 
     //닉네임변경
     @PutMapping("/update/nickname")
-    public ResponseEntity<String> updateNickname(@RequestBody @Valid MypageRequestDto request) {
+    public ResponseEntity<Integer> updateNickname(@RequestBody @Valid MypageRequestDto request) {
         return mypageService.updateNick(request);
     }
 
     //비밀번호 변경
     @PutMapping("/update/password")
-    public ResponseEntity<String> updatePassword(@RequestBody @Valid MypageRequestDto request) {
+    public ResponseEntity<Integer> updatePassword(@RequestBody @Valid MypageRequestDto request) {
         return mypageService.updatePassword(request);
     }
 }

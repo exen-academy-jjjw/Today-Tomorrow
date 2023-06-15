@@ -30,7 +30,7 @@ public class JwtController {
     private final JwtService jwtService;
 
     @PostMapping(value = "/reissue")
-    public ResponseEntity<String> reissue(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<Integer> reissue(HttpServletRequest request, HttpServletResponse response) {
         return jwtService.reissue(request, response);
     }
 }

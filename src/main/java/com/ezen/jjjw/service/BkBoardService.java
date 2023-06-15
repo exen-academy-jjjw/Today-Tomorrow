@@ -5,21 +5,21 @@ package com.ezen.jjjw.service;
 import com.ezen.jjjw.domain.entity.BkBoard;
 import com.ezen.jjjw.domain.entity.Member;
 import com.ezen.jjjw.dto.BkBoardDto;
-import com.ezen.jjjw.exception.CustomException;
-import com.ezen.jjjw.exception.ErrorCode;
 import com.ezen.jjjw.jwt.TokenProvider;
 import com.ezen.jjjw.repository.BkBoardRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 
 @RequiredArgsConstructor
 @Service
+@Slf4j
 public class BkBoardService {
 
     private final BkBoardRepository bkBoardRepository;
@@ -40,40 +40,62 @@ public class BkBoardService {
     }
 
     @Transactional
-    public ResponseEntity<BkBoard> getBkBoardById(Long postId) {
+    public ResponseEntity<?> getBkBoardById(Long postId) {
         BkBoard bkBoard = (bkBoardRepository.findById(postId)).get();
         if(bkBoard == null) {
-            throw new CustomException(ErrorCode.NOT_FOUND_POST);
+//            throw new CustomException(ErrorCode.NOT_FOUND_POST);
+            log.info("존재하지 않는 게시글");
+            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
         }
         return ResponseEntity.ok(bkBoard);
     }
 
     @Transactional
-    public ResponseEntity<BkBoard> create(BkBoardDto.Request bkrequest) {
+    public ResponseEntity<Integer> create(BkBoardDto.Request bkrequest) {
         Member member = tokenProvider.getMemberFromAuthentication();
         BkBoard bkBoard = bkrequest.toEntity(member);
         bkBoardRepository.save(bkBoard);
-        return ResponseEntity.ok(bkBoard);
+//        return ResponseEntity.ok(bkBoard);
+        log.info("게시글 작성 성공");
+        return ResponseEntity.ok(HttpServletResponse.SC_OK);
     }
 
     @Transactional
-    public ResponseEntity<BkBoard> update(Long postId, BkBoardDto.Request bkrequest) {
-        BkBoard bkBoard = bkBoardRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
+    public ResponseEntity<Integer> update(Long postId, BkBoardDto.UpdateRequest bkrequest) {
+//        BkBoard bkBoard = bkBoardRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
+        BkBoard bkBoard = (bkBoardRepository.findById(postId)).get();
+        if(bkBoard == null) {
+            log.info("존재하지 않는 게시글");
+            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
+        }
+
         bkBoard.update(bkrequest);
         bkBoardRepository.save(bkBoard);
-        return ResponseEntity.ok(bkBoard);
+//        return ResponseEntity.ok(bkBoard);
+        log.info("게시글 업데이트 성공");
+        return ResponseEntity.ok(HttpServletResponse.SC_OK);
     }
 
     @Transactional
-    public void delete(Long postId, HttpServletRequest request) {
+    public ResponseEntity<Integer> delete(Long postId) {
         String loggedInMemberId = (tokenProvider.getMemberFromAuthentication()).getMemberId();
-        BkBoard bkBoard = bkBoardRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
+//        BkBoard bkBoard = bkBoardRepository.findById(postId).orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND_POST));
+        BkBoard bkBoard = (bkBoardRepository.findById(postId)).get();
+        if(bkBoard == null) {
+            log.info("존재하지 않는 게시글");
+            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
+        }
 
         // 작성자의 memberId와 로그인한 사용자의 memberId 비교
         if (!(bkBoard.getMember().getMemberId()).equals(loggedInMemberId)) {
-            throw new CustomException(ErrorCode.INVALID_USER);
+//            throw new CustomException(ErrorCode.INVALID_USER);
+            log.info("사용자 불일치");
+            return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
         }
 
         bkBoardRepository.deleteById(postId);
+
+        log.info("게시글 삭제 성공");
+        return ResponseEntity.ok(HttpServletResponse.SC_OK);
     }
 }

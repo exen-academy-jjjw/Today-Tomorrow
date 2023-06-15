@@ -30,25 +30,25 @@ public class ReviewController {
 
     // 리뷰 게시글 작성 POST /review/create/{postId}
     @PostMapping(value = "/create/{postId}")
-    public ResponseEntity<ReviewResponseDto> createReview(@PathVariable Long postId, @RequestBody @Valid ReviewRequestDto reviewRequestDto) {
+    public ResponseEntity<Integer> createReview(@PathVariable Long postId, @RequestBody @Valid ReviewRequestDto reviewRequestDto) {
         return reviewService.createReview(postId, reviewRequestDto);
     }
 
     // 리뷰 게시글 상세 GET /review/detail/{postId}
     @GetMapping(value = "/detail/{postId}")
-    public ResponseEntity<ReviewResponseDto> detailReview(@PathVariable Long postId) {
+    public ResponseEntity<?> detailReview(@PathVariable Long postId) {
         return reviewService.findByPostId(postId);
     }
 
     // 리뷰 게시글 수정 PUT /review/update/{postId}
     @PutMapping(value = "/update/{postId}")
-    public ResponseEntity<ReviewResponseDto> updateReview(@PathVariable Long postId, @RequestBody @Valid ReviewRequestDto requestDto) {
+    public ResponseEntity<Integer> updateReview(@PathVariable Long postId, @RequestBody @Valid ReviewRequestDto requestDto) {
         return reviewService.updateSave(postId, requestDto);
     }
 
     // 리뷰 게시글 삭제 DELETE /review/delete/{postId}
     @DeleteMapping(value = "/delete/{postId}")
-    public ResponseEntity<String> deleteReview(@PathVariable Long postId) {
+    public ResponseEntity<Integer> deleteReview(@PathVariable Long postId) {
         return reviewService.deleteByReviewId(postId);
     }
 }

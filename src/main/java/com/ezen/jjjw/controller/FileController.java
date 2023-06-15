@@ -30,26 +30,26 @@ public class FileController {
 
     // 리뷰 파일 첨부 POST /file/create/{reviewId}
     @PostMapping(value = "/create/{reviewId}")
-    public ResponseEntity<String> createFile(@PathVariable Long reviewId,
+    public ResponseEntity<Integer> createFile(@PathVariable Long reviewId,
                                         @RequestParam(value = "fileUrl", required = false) List<MultipartFile> multipartFiles) {
         return fileService.createFile(reviewId, multipartFiles);
     }
 
     // 리뷰 파일 상세 GET /file/detail/{reviewId}
     @GetMapping(value = "/detail/{reviewId}")
-    public ResponseEntity<List<FileResponseDto>> detailFile(@PathVariable Long reviewId) {
+    public ResponseEntity<?> detailFile(@PathVariable Long reviewId) {
         return fileService.findReviewId(reviewId);
     }
 
     // 리뷰 파일 수정 PUT /file/update/{reviewId}
     @PutMapping(value = "/update/{reviewId}")
-    public ResponseEntity<String> updateFile(@PathVariable Long reviewId, @RequestParam("fileUrl") List<MultipartFile> multipartFiles) {
+    public ResponseEntity<?> updateFile(@PathVariable Long reviewId, @RequestParam("fileUrl") List<MultipartFile> multipartFiles) {
         return fileService.updateFile(reviewId, multipartFiles);
     }
 
     // 리뷰 파일 삭제 POST /file/delete/{reviewId}
     @DeleteMapping(value = "/delete/{reviewId}")
-    public ResponseEntity<String> deleteFile(@PathVariable Long reviewId) {
+    public ResponseEntity<Integer> deleteFile(@PathVariable Long reviewId) {
         return fileService.deleteByFileId(reviewId);
     }
 }
