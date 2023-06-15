@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
@@ -37,6 +38,10 @@ public class BkBoard extends Timestamped {
         @Column(unique = false)
         private String content;
 
+        @ColumnDefault("0")
+        @Builder.Default
+        private Integer completion = 0;
+
         @OneToOne(mappedBy = "bkBoard", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
         private Review review;
 
@@ -47,9 +52,10 @@ public class BkBoard extends Timestamped {
                 this.category = bkBoardDto.getCategory();
         }
 
-        public void update(BkBoardDto.Request bkBoardRequestDto){
+        public void update(BkBoardDto.UpdateRequest bkBoardRequestDto){
                 this.title = bkBoardRequestDto.getTitle();
                 this.content = bkBoardRequestDto.getContent();
                 this.category = bkBoardRequestDto.getCategory();
+                this.completion = bkBoardRequestDto.getCompletion();
         }
 }
