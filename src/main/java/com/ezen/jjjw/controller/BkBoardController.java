@@ -20,13 +20,13 @@ public class BkBoardController {
     private  final BkBoardService bkBoardService;
 
     @PostMapping("/create")
-    public ResponseEntity<BkBoard> create(@RequestBody BkBoardDto.Request bkrequest) {
+    public ResponseEntity<Integer> create(@RequestBody BkBoardDto.Request bkrequest) {
         return bkBoardService.create(bkrequest);
     }
 
     // update
     @PutMapping("/update/{postId}")
-    public ResponseEntity<BkBoard> update(@PathVariable("postId") Long postId, @RequestBody BkBoardDto.Request bkrequest) {
+    public ResponseEntity<Integer> update(@PathVariable("postId") Long postId, @RequestBody BkBoardDto.UpdateRequest bkrequest) {
         return bkBoardService.update(postId, bkrequest);
     }
 
@@ -42,12 +42,12 @@ public class BkBoardController {
     }
 
     @DeleteMapping("/delete/{postId}")
-    public void delete(@PathVariable("postId") Long postId, HttpServletRequest request) {
-        bkBoardService.delete(postId, request);
+    public ResponseEntity<Integer> delete(@PathVariable("postId") Long postId) {
+        return bkBoardService.delete(postId);
     }
 
     @GetMapping("/detail/{postId}")
-    public ResponseEntity<BkBoard> detail(@PathVariable("postId") Long postId, HttpServletRequest request) {
+    public ResponseEntity<?> detail(@PathVariable("postId") Long postId, HttpServletRequest request) {
         return bkBoardService.getBkBoardById(postId);
     }
 }

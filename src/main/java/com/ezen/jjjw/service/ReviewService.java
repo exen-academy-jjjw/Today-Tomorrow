@@ -5,8 +5,6 @@ import com.ezen.jjjw.domain.entity.Review;
 import com.ezen.jjjw.domain.entity.ReviewFile;
 import com.ezen.jjjw.dto.request.ReviewRequestDto;
 import com.ezen.jjjw.dto.response.ReviewResponseDto;
-import com.ezen.jjjw.exception.CustomException;
-import com.ezen.jjjw.exception.ErrorCode;
 import com.ezen.jjjw.repository.BkBoardRepository;
 import com.ezen.jjjw.repository.FileRepository;
 import com.ezen.jjjw.repository.ReviewRepository;
@@ -16,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -43,16 +42,20 @@ public class ReviewService {
 
     // 리뷰 게시글 작성 POST /review/create/{postId}
     @Transactional
-    public ResponseEntity<ReviewResponseDto> createReview(Long postId, ReviewRequestDto reviewRequestDto) {
+    public ResponseEntity<Integer> createReview(Long postId, ReviewRequestDto reviewRequestDto) {
 
         BkBoard bkBoard = isPresentPost(postId);
         if (null == bkBoard) {
-            throw new CustomException(ErrorCode.NOT_FOUND_POST);
+//            throw new CustomException(ErrorCode.NOT_FOUND_POST);
+            log.info("존재하지 않는 게시글");
+            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
         }
 
         Review findReview = bkBoard.getReview();
         if(findReview != null) {
-            throw new CustomException(ErrorCode.EXIST_REVIEW);
+//            throw new CustomException(ErrorCode.EXIST_REVIEW);
+            log.info("리뷰가 존재하는 게시글");
+            return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
         }
 
         Review review = Review.builder()
@@ -61,15 +64,17 @@ public class ReviewService {
                 .build();
         reviewRepository.save(review);
 
-        ReviewResponseDto reviewResponseDto = ReviewResponseDto.builder()
-                .id(review.getId())
-                .postId(review.getBkBoard().getPostId())
-                .reviewContent(review.getReviewContent())
-                .createdAt(review.getCreatedAt())
-                .modifiedAt(review.getModifiedAt())
-                .build();
-
-        return ResponseEntity.ok(reviewResponseDto);
+//        ReviewResponseDto reviewResponseDto = ReviewResponseDto.builder()
+//                .id(review.getId())
+//                .postId(review.getBkBoard().getPostId())
+//                .reviewContent(review.getReviewContent())
+//                .createdAt(review.getCreatedAt())
+//                .modifiedAt(review.getModifiedAt())
+//                .build();
+//
+//        return ResponseEntity.ok(reviewResponseDto);
+        log.info("리뷰 작성 성공");
+        return ResponseEntity.ok(HttpServletResponse.SC_OK);
     }
 
     @Transactional(readOnly = true)
@@ -80,16 +85,20 @@ public class ReviewService {
 
     // 리뷰 게시글 상세 GET /review/detail/{postId}
     @Transactional(readOnly = true)
-    public ResponseEntity<ReviewResponseDto> findByPostId(Long postId) {
+    public ResponseEntity<?> findByPostId(Long postId) {
 
         BkBoard bkBoard = isPresentPost(postId);
         if (null == bkBoard) {
-            throw new CustomException(ErrorCode.NOT_FOUND_POST);
+//            throw new CustomException(ErrorCode.NOT_FOUND_POST);
+            log.info("존재하지 않는 게시글");
+            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
         }
 
         Review findReview = bkBoard.getReview();
         if(null == findReview) {
-            throw new CustomException(ErrorCode.NOT_FOUND_REVIEW);
+//            throw new CustomException(ErrorCode.NOT_FOUND_REVIEW);
+            log.info("존재하지 않는 리뷰");
+            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
         }
 
         List<ReviewFile> reviewFIle = fileRepository.findAllByReviewId(findReview.getId());
@@ -113,47 +122,59 @@ public class ReviewService {
 
     // 리뷰 게시글 수정 PUT /review/update/{postId}
     @Transactional
-    public ResponseEntity<ReviewResponseDto> updateSave(Long postId, ReviewRequestDto requestDto) {
+    public ResponseEntity<Integer> updateSave(Long postId, ReviewRequestDto requestDto) {
 
         BkBoard bkBoard = isPresentPost(postId);
         if (null == bkBoard) {
-            throw new CustomException(ErrorCode.NOT_FOUND_POST);
+//            throw new CustomException(ErrorCode.NOT_FOUND_POST);
+            log.info("존재하지 않는 게시글");
+            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
         }
 
         Review findReview = bkBoard.getReview();
         if(findReview == null) {
-            throw new CustomException(ErrorCode.NOT_FOUND_REVIEW);
+//            throw new CustomException(ErrorCode.NOT_FOUND_REVIEW);
+            log.info("존재하지 않는 리뷰");
+            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
         }
 
         findReview.update(requestDto);
         reviewRepository.save(findReview.getBkBoard().getReview());
 
-        ReviewResponseDto reviewResponseDto = ReviewResponseDto.builder()
-                .id(findReview.getId())
-                .postId(findReview.getBkBoard().getPostId())
-                .reviewContent(findReview.getReviewContent())
-                .createdAt(findReview.getCreatedAt())
-                .modifiedAt(findReview.getModifiedAt())
-                .build();
-
-        return ResponseEntity.ok(reviewResponseDto);
+//        ReviewResponseDto reviewResponseDto = ReviewResponseDto.builder()
+//                .id(findReview.getId())
+//                .postId(findReview.getBkBoard().getPostId())
+//                .reviewContent(findReview.getReviewContent())
+//                .createdAt(findReview.getCreatedAt())
+//                .modifiedAt(findReview.getModifiedAt())
+//                .build();
+//
+//        return ResponseEntity.ok(reviewResponseDto);
+        log.info("리뷰 수정 성공");
+        return ResponseEntity.ok(HttpServletResponse.SC_OK);
     }
 
     // 리뷰 게시글 삭제 DELETE /review/delete/{postId}
     @Transactional
-    public ResponseEntity<String> deleteByReviewId(Long postId) {
+    public ResponseEntity<Integer> deleteByReviewId(Long postId) {
 
         BkBoard bkBoard = isPresentPost(postId);
         if (null == bkBoard) {
-            throw new CustomException(ErrorCode.NOT_FOUND_POST);
+//            throw new CustomException(ErrorCode.NOT_FOUND_POST);
+            log.info("존재하지 않는 게시글");
+            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
         }
 
         Review findReview = bkBoard.getReview();
         if(findReview == null) {
-            throw new CustomException(ErrorCode.NOT_FOUND_REVIEW);
+//            throw new CustomException(ErrorCode.NOT_FOUND_REVIEW);
+            log.info("존재하지 않는 리뷰");
+            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
         }
 
         reviewRepository.delete(findReview);
-        return ResponseEntity.ok("delete success");
+//        return ResponseEntity.ok("delete success");
+        log.info("리뷰 삭제 성공");
+        return ResponseEntity.ok(HttpServletResponse.SC_OK);
     }
 }

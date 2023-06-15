@@ -19,25 +19,18 @@ public class BkBoardDto {
     private String category; // 카테고리
     private String title;  // 제목
     private String content;  // 내용
+    private Integer completion; // 완료 여부
     private LocalDateTime createAt; // 생성일자
     private LocalDateTime modifiedAt; // 수정일자
 
     @Getter
     @NoArgsConstructor
     public static class Request {
-        private String memberId;
+//        private String memberId;
         private Long postId; // 게시판 식별자
         private String category; // 카테고리
         private String title;  // 제목
         private String content;  // 내용
-
-        @Builder
-        public void Request(Long postId, String category, String title, String content) {
-            this.postId = postId;
-            this.category = category;
-            this.title = title;
-            this.content = content;
-        }
 
         public BkBoard toEntity(Member member) {
             return BkBoard.builder()
@@ -48,10 +41,29 @@ public class BkBoardDto {
                     .content(content)
                     .build();
         }
-
-    public void setMemberId(String memberId) {
-    }
 }
+
+    @Getter
+    @NoArgsConstructor
+    public static class UpdateRequest {
+        //        private String memberId;
+        private Long postId; // 게시판 식별자
+        private String category; // 카테고리
+        private String title;  // 제목
+        private String content;  // 내용
+        private Integer completion;
+
+        public BkBoard toEntity(Member member) {
+            return BkBoard.builder()
+                    .member(member)
+                    .postId(postId)
+                    .category(category)
+                    .title(title)
+                    .content(content)
+                    .completion(completion)
+                    .build();
+        }
+    }
 
     @Getter
     @NoArgsConstructor
@@ -60,16 +72,18 @@ public class BkBoardDto {
         private String category; // 카테고리
         private String title;  // 제목
         private String content;  // 내용
+        private Integer completion; // 완료 여부
         private LocalDateTime createAt; // 생성일자
         private LocalDateTime modifiedAt; // 수정일자
 
         @Builder
-        public Response(Long postId, String category, String title, String content, LocalDateTime createdAt, LocalDateTime modifiedAt, String memberId) {
+        public Response(Long postId, String category, String title, String content, LocalDateTime createdAt, LocalDateTime modifiedAt, Integer completion) {
 
             this.postId = postId;
             this.category = category;
             this.title = title;
             this.content = content;
+            this.completion = completion;
             this.createAt = createdAt;
             this.modifiedAt = modifiedAt;
         }
@@ -83,6 +97,7 @@ public class BkBoardDto {
                     .postId(bkBoard.getPostId())
                     .title(bkBoard.getTitle())
                     .content(bkBoard.getContent())
+                    .completion(bkBoard.getCompletion())
                     .createdAt(bkBoard.getCreatedAt())
                     .modifiedAt(bkBoard.getModifiedAt())
                     .build();
