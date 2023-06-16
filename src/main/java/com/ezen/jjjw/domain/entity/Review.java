@@ -42,7 +42,11 @@ public class Review extends Timestamped {
     @Column(columnDefinition = "LONGTEXT")
     private String reviewContent;
 
-    public void update(ReviewRequestDto reviewRequestDto) {
-        this.reviewContent = reviewRequestDto.getReviewContent();
+    public void update(String reviewContent) {
+        this.reviewContent = reviewContent;
     }
+
+//    public void update(ReviewRequestDto reviewRequestDto) {
+//        this.reviewContent = reviewRequestDto.getReviewContent();
+//    }
 }

@@ -33,7 +33,7 @@ public class ReviewFile extends Timestamped{
     @ManyToOne(fetch = FetchType.LAZY)
     private Review review;
 
-    @Column(nullable = false)
+    @Column
     private String fileUrl;
 
     public ReviewFile(String localPath) {

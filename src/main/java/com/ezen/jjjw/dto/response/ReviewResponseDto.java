@@ -26,7 +26,6 @@ import java.util.List;
 @AllArgsConstructor
 public class ReviewResponseDto {
     private Long id;
-    private String nickname;
     private Long postId;
     private List<String> fileUrlList;
     private String reviewContent;
