@@ -62,6 +62,7 @@ public class ReviewService {
                 .reviewContent(reviewRequestDto.getReviewContent())
                 .bkBoard(bkBoard)
                 .build();
+        bkBoard.updateExistReview(bkBoard, review);
         reviewRepository.save(review);
 
 //        ReviewResponseDto reviewResponseDto = ReviewResponseDto.builder()

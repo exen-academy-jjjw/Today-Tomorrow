@@ -38,6 +38,7 @@ public class FileController {
     // 리뷰 파일 상세 GET /file/detail/{reviewId}
     @GetMapping(value = "/detail/{reviewId}")
     public ResponseEntity<?> detailFile(@PathVariable Long reviewId) {
+
         return fileService.findReviewId(reviewId);
     }
 

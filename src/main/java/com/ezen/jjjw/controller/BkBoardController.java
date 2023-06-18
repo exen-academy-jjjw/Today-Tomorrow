@@ -20,7 +20,7 @@ public class BkBoardController {
     private  final BkBoardService bkBoardService;
 
     @PostMapping("/create")
-    public ResponseEntity<Integer> create(@RequestBody BkBoardDto.Request bkrequest) {
+    public ResponseEntity<Long> create(@RequestBody BkBoardDto.Request bkrequest) {
         return bkBoardService.create(bkrequest);
     }
 
@@ -47,7 +47,13 @@ public class BkBoardController {
     }
 
     @GetMapping("/detail/{postId}")
-    public ResponseEntity<?> detail(@PathVariable("postId") Long postId, HttpServletRequest request) {
+    public ResponseEntity<?> detail(@PathVariable("postId") Long postId, Integer existReview) {
         return bkBoardService.getBkBoardById(postId);
+    }
+
+    /*compleetion 관련 코드 추가*/
+    @PutMapping("/completion/{postId}")
+    public ResponseEntity<Integer> updateCompletion(@PathVariable("postId") Long postId, @RequestBody BkBoardDto.RequestCompletion requestCompletion) {
+        return bkBoardService.updateCompletion(postId, requestCompletion);
     }
 }
