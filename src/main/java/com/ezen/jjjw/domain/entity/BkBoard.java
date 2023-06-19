@@ -40,11 +40,11 @@ public class BkBoard extends Timestamped {
 
         @ColumnDefault("0")
         @Builder.Default
-        private Integer completion = 0;
+        private int completion = 0;
 
         @ColumnDefault("0")
         @Builder.Default
-        private Integer existReview = 0;
+        private int existReview = 0;
 
         @OneToOne(mappedBy = "bkBoard", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
         private Review review;

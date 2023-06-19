@@ -61,7 +61,7 @@ public class BkBoardDto {
         private String category; // 카테고리
         private String title;  // 제목
         private String content;  // 내용
-        private Integer completion;
+        private int completion;
 
         public BkBoard toEntity(Member member) {
             return BkBoard.builder()
@@ -82,13 +82,13 @@ public class BkBoardDto {
         private String category; // 카테고리
         private String title;  // 제목
         private String content;  // 내용
-        private Integer completion; // 완료 여부
+        private int completion; // 완료 여부
         private Integer existReview; // 리뷰 존재 유무
         private LocalDateTime createAt; // 생성일자
         private LocalDateTime modifiedAt; // 수정일자
 
         @Builder
-        public Response(Long postId, String category, String title, String content, LocalDateTime createdAt, LocalDateTime modifiedAt, Integer completion, Integer existReview) {
+        public Response(Long postId, String category, String title, String content, LocalDateTime createdAt, LocalDateTime modifiedAt, int completion, Integer existReview) {
 
             this.postId = postId;
             this.category = category;
