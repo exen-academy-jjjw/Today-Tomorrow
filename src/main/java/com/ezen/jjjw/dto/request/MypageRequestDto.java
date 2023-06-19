@@ -1,10 +1,8 @@
 package com.ezen.jjjw.dto.request;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Getter
+@Data
 @NoArgsConstructor
 public class MypageRequestDto {
 

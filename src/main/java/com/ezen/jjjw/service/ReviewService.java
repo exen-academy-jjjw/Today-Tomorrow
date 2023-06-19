@@ -66,6 +66,7 @@ public class ReviewService {
                 .reviewContent(reviewContent)
                 .bkBoard(bkBoard)
                 .build();
+        bkBoard.updateExistReview(bkBoard, review);
         reviewRepository.save(review);
 
         log.info("리뷰 작성 성공");

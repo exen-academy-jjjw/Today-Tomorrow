@@ -47,17 +47,18 @@ public class BkBoardService {
             log.info("존재하지 않는 게시글");
             return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
         }
+
         return ResponseEntity.ok(bkBoard);
     }
 
     @Transactional
-    public ResponseEntity<Integer> create(BkBoardDto.Request bkrequest) {
+    public ResponseEntity<Long> create(BkBoardDto.Request bkrequest) {
         Member member = tokenProvider.getMemberFromAuthentication();
         BkBoard bkBoard = bkrequest.toEntity(member);
         bkBoardRepository.save(bkBoard);
 //        return ResponseEntity.ok(bkBoard);
         log.info("게시글 작성 성공");
-        return ResponseEntity.ok(HttpServletResponse.SC_OK);
+        return ResponseEntity.ok(bkBoard.getPostId());
     }
 
     @Transactional
@@ -97,5 +98,20 @@ public class BkBoardService {
 
         log.info("게시글 삭제 성공");
         return ResponseEntity.ok(HttpServletResponse.SC_OK);
+    }
+
+    @Transactional
+    public ResponseEntity<Integer> updateCompletion(Long postId, BkBoardDto.RequestCompletion requestCompletion) {
+        BkBoard bkBoard = (bkBoardRepository.findById(postId)).get();
+        if(bkBoard == null) {
+            log.info("존재하지 않는 게시글");
+            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
+        }
+
+        bkBoard.updateCompletion(requestCompletion);
+        bkBoardRepository.save(bkBoard);
+
+        log.info("완료 여부 변경 완료");
+        return ResponseEntity.ok(bkBoard.getCompletion());
     }
 }

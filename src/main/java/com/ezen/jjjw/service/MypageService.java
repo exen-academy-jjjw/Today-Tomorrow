@@ -4,6 +4,7 @@ import com.ezen.jjjw.domain.entity.Member;
 import com.ezen.jjjw.dto.request.MypageRequestDto;
 import com.ezen.jjjw.dto.response.MypageResponseDto;
 import com.ezen.jjjw.jwt.TokenProvider;
+import com.ezen.jjjw.repository.BkBoardRepository;
 import com.ezen.jjjw.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,13 +23,21 @@ public class MypageService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
+    private final BkBoardRepository bkBoardRepository;
 
     //맴버 정보 조회
     @Transactional
     public ResponseEntity<MypageResponseDto> getFindMember() {
         Member member = tokenProvider.getMemberFromAuthentication();
+        Integer totalCount = bkBoardRepository.countByMemberId(member.getId());
+        Integer completeCount = bkBoardRepository.countByMemberIdAndCompletion(member.getId(), 1);
+        Integer unCompleteCount = totalCount - completeCount;
+
         MypageResponseDto memberInfo = MypageResponseDto.builder()
                 .nickname(member.getNickname())
+                .totalCount(totalCount)
+                .completeCount(completeCount)
+                .unCompleteCount(unCompleteCount)
                 .build();
         return ResponseEntity.ok(memberInfo);
     }
@@ -62,11 +71,14 @@ public class MypageService {
             return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
         }
 
+        log.info("리퀘스트에는 그럼 ㅜ머가 들어오는데 " + request);
+        log.info("request.getPassword()" + request.getPassword());
+        log.info("memberPassword.getPassword()" + memberPassword.getPassword());
         if(!passwordEncoder.matches(request.getPassword(), memberPassword.getPassword())){
-//            throw new CustomException(ErrorCode.NOT_MATCH_PASSWORD);
             log.info("비밀번호 불일치");
             return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
         }
+
         memberPassword.updatePassword(passwordEncoder, request);
         memberRepository.save(memberPassword);
 

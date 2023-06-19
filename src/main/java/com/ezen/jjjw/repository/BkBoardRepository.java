@@ -15,4 +15,7 @@ public interface BkBoardRepository extends JpaRepository<BkBoard, Long> {
         List<BkBoard> findAllByMemberId(Long memberId);
         List<BkBoard> findAllByMemberIdAndCategory(Long memberId, String category);
 
+        Integer countByMemberId(Long memberId);
+        Integer countByMemberIdAndCompletion(Long memberId, int completionValue);
+
 }
