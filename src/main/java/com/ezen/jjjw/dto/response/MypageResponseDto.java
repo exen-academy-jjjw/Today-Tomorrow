@@ -8,9 +8,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MypageResponseDto {
     private String nickname;
-    private int totalCount;
-    private int completeCount;
-    private int unCompleteCount;
+    private Integer totalCount;
+    private Integer completeCount;
+    private Integer unCompleteCount;
 
     @Builder
     public MypageResponseDto(final String nickname, final int totalCount, final int completeCount, final int unCompleteCount) {

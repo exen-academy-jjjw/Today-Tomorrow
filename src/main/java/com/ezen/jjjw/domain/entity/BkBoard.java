@@ -40,7 +40,11 @@ public class BkBoard extends Timestamped {
 
         @ColumnDefault("0")
         @Builder.Default
-        private Integer completion = 0;
+        private int completion = 0;
+
+        @ColumnDefault("0")
+        @Builder.Default
+        private int existReview = 0;
 
         @OneToOne(mappedBy = "bkBoard", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
         private Review review;
@@ -57,5 +61,15 @@ public class BkBoard extends Timestamped {
                 this.content = bkBoardRequestDto.getContent();
                 this.category = bkBoardRequestDto.getCategory();
                 this.completion = bkBoardRequestDto.getCompletion();
+        }
+
+        public void updateCompletion(BkBoardDto.RequestCompletion requestCompletion){
+                this.completion = requestCompletion.getCompletion();
+        }
+
+        public void updateExistReview(BkBoard bkBoard, Review review){
+                if(bkBoard.getReview().getId() == review.getId()) {
+                        this.existReview = 1;
+                }
         }
 }

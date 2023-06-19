@@ -42,7 +42,7 @@ public class MemberController {
 
     // 로그인, 토큰을 담아 보내야 하기 때문에 HttpServletResponse도 함께 넣는다.
     @PostMapping(value = "/login")
-    public ResponseEntity<Integer> login(@RequestBody @Valid MemberLoginReqDto memberLoginReqDto, HttpServletResponse response) {
+    public ResponseEntity<?> login(@RequestBody @Valid MemberLoginReqDto memberLoginReqDto, HttpServletResponse response) {
         return memberService.login(memberLoginReqDto, response);
     }
 
