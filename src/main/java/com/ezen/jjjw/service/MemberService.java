@@ -80,7 +80,7 @@ public class MemberService {
 
     // 로그인 로직
     @Transactional
-    public ResponseEntity<Integer> login(MemberLoginReqDto memberLoginReqDto, HttpServletResponse response) {
+    public ResponseEntity<?> login(MemberLoginReqDto memberLoginReqDto, HttpServletResponse response) {
         // 사용자로부터 입력받은 아이디를 통해 DB에 해당 아이디가 존재하는지 확인
         Member member = isPresentMember(memberLoginReqDto.getMemberId());
         if (null == member) {
@@ -101,7 +101,7 @@ public class MemberService {
         tokenProvider.tokenToHeaders(tokenDto, response);
 //        return ResponseEntity.ok("로그인 성공");
         log.info("로그인 성공");
-        return ResponseEntity.ok(HttpServletResponse.SC_OK);
+        return ResponseEntity.ok(member.getNickname());
     }
 
     // 로그아웃 로직
