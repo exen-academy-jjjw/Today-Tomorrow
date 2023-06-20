@@ -46,6 +46,7 @@ public class BkBoard extends Timestamped {
         @Builder.Default
         private int existReview = 0;
 
+        @JsonIgnore
         @OneToOne(mappedBy = "bkBoard", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
         private Review review;
 
@@ -67,12 +68,7 @@ public class BkBoard extends Timestamped {
                 this.completion = requestCompletion.getCompletion();
         }
 
-        public void updateExistReview(BkBoard bkBoard, Review review){
-//                if(bkBoard.getReview().getId() == review.getId()) {
-//                        this.existReview = 1;
-//                }
-                if(bkBoard.getReview() != null && bkBoard.getReview().getId() == review.getId()) {
-                        this.existReview = 1;
-                }
+        public void updateExistReview(BkBoard bkBoard){
+                this.existReview = 1;
         }
 }
