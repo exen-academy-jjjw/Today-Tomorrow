@@ -45,7 +45,6 @@ public class ReviewController {
     @GetMapping(value = "/detail/{postId}")
     public ResponseEntity<?> detailReview(@PathVariable Long postId) {
         return reviewService.findByPostId(postId);
-//        return fileService.findReviewId(postId);
     }
 
     // 리뷰 게시글 수정 PUT /review/update/{postId}

@@ -68,7 +68,10 @@ public class BkBoard extends Timestamped {
         }
 
         public void updateExistReview(BkBoard bkBoard, Review review){
-                if(bkBoard.getReview().getId() == review.getId()) {
+//                if(bkBoard.getReview().getId() == review.getId()) {
+//                        this.existReview = 1;
+//                }
+                if(bkBoard.getReview() != null && bkBoard.getReview().getId() == review.getId()) {
                         this.existReview = 1;
                 }
         }
