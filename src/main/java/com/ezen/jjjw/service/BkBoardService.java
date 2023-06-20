@@ -27,8 +27,12 @@ public class BkBoardService {
 
     @Transactional
     public ResponseEntity<List<BkBoard>> getAllBkBoardDto() {
+        log.info("진입1");
         Member member = tokenProvider.getMemberFromAuthentication();
+        log.info("진입2");
         List<BkBoard> bkBoardList = bkBoardRepository.findAllByMemberId(member.getId());
+        log.info("진입3");
+        log.info(bkBoardList.toString());
         return ResponseEntity.ok(bkBoardList);
     }
 

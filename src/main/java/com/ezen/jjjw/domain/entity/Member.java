@@ -57,8 +57,9 @@ public class Member extends Timestamped {
     @OneToOne(mappedBy = "member", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private RefreshToken refreshTokenList = new RefreshToken();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<BkBoard> bkBoardList = new ArrayList<>();
+//    @JsonIgnore
+//    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+//    private List<BkBoard> bkBoardList = new ArrayList<>();
 
     // DB에 들어있는 비밀번호와 입력받은 비밀번호의 일치 여부를 확인할 때 사용
     public boolean validatePassword(PasswordEncoder passwordEncoder, String password) {

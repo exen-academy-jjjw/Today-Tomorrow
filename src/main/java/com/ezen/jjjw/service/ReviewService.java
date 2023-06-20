@@ -49,15 +49,14 @@ public class ReviewService {
     // 리뷰 게시글 작성 POST /review/create/{postId}
     @Transactional
     public ResponseEntity<Integer> createReview(Long postId, String reviewContent, List<MultipartFile> multipartFiles) {
-
         BkBoard bkBoard = isPresentPost(postId);
-        if (null == bkBoard) {
+        if (bkBoard == null) {
             log.info("존재하지 않는 게시글");
             return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
         }
 
-        Review findReview = bkBoard.getReview();
-        if (findReview != null) {
+        int existReview = bkBoard.getExistReview();
+        if (existReview == 1) {
             log.info("리뷰가 존재하는 게시글");
             return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
         }
@@ -66,7 +65,8 @@ public class ReviewService {
                 .reviewContent(reviewContent)
                 .bkBoard(bkBoard)
                 .build();
-        bkBoard.updateExistReview(bkBoard, review);
+        bkBoard.updateExistReview(bkBoard);
+        bkBoardRepository.save(bkBoard);
         reviewRepository.save(review);
 
         log.info("리뷰 작성 성공");
@@ -109,6 +109,8 @@ public class ReviewService {
     }
 
 
+
+
     @Transactional(readOnly = true)
     public BkBoard isPresentPost(Long id) {
         Optional<BkBoard> optionalPost = bkBoardRepository.findById(id);
@@ -125,12 +127,13 @@ public class ReviewService {
             return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
         }
 
-        Review findReview = bkBoard.getReview();
-        if (null == findReview) {
+        int existReview = bkBoard.getExistReview();
+        if (existReview == 0) {
             log.info("존재하지 않는 리뷰");
             return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
         }
 
+        Review findReview = bkBoard.getReview();
         List<ReviewFile> reviewFIle = fileRepository.findAllByReviewId(findReview.getId());
 
         List<String> imageList = new ArrayList<>();
@@ -182,13 +185,14 @@ public class ReviewService {
         }
 
         // 리뷰 유효성 검증
-        Review findReview = bkBoard.getReview();
-        if (findReview == null) {
+        int existReview = bkBoard.getExistReview();
+        if (existReview == 0) {
             log.info("존재하지 않는 리뷰");
             return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
         }
 
         // reviewContent 업데이트
+        Review findReview = bkBoard.getReview();
         findReview.update(reviewRequestDto.getReviewContent());
         reviewRepository.save(findReview.getBkBoard().getReview());
         log.info("리뷰 수정 성공");
@@ -272,12 +276,13 @@ public class ReviewService {
             return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
         }
 
-        Review findReview = bkBoard.getReview();
-        if (findReview == null) {
+        int existReview = bkBoard.getExistReview();
+        if (existReview == 0) {
             log.info("존재하지 않는 리뷰");
             return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
         }
 
+        Review findReview = bkBoard.getReview();
         reviewRepository.delete(findReview);
         log.info("리뷰 삭제 성공");
 

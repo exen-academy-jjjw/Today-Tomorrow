@@ -46,7 +46,4 @@ public class Review extends Timestamped {
         this.reviewContent = reviewContent;
     }
 
-//    public void update(ReviewRequestDto reviewRequestDto) {
-//        this.reviewContent = reviewRequestDto.getReviewContent();
-//    }
 }
