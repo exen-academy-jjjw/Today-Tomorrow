@@ -28,31 +28,19 @@ public class BkBoardService {
     private final BkBoardRepository bkBoardRepository;
     private final TokenProvider tokenProvider;
 
-//    @Transactional
-//    public ResponseEntity<List<BkBoard>> getAllBkBoardDto() {
-//        Member member = tokenProvider.getMemberFromAuthentication();
-//        List<BkBoard> bkBoardList = bkBoardRepository.findAllByMemberId(member.getId());
-//        return ResponseEntity.ok(bkBoardList);
-//    }
     @Transactional
     public ResponseEntity<List<BkBoard>> getAllBkBoardDto(int page) {
         Member member = tokenProvider.getMemberFromAuthentication();
-        PageRequest pageRequest = PageRequest.of(page, 7, Sort.by("postId").descending());
+        PageRequest pageRequest = PageRequest.of(page, 10, Sort.by("postId").descending());
         Page<BkBoard> bkBoardPage = bkBoardRepository.findAllByMemberId(member.getId(), pageRequest);
         List<BkBoard> bkBoardList = bkBoardPage.getContent();
         return ResponseEntity.ok(bkBoardList);
     }
 
-//    @Transactional
-//    public ResponseEntity<List<BkBoard>> findAllByMemberIdAndCategory(String category) {
-//        Member member = tokenProvider.getMemberFromAuthentication();
-//        List<BkBoard> bkBoardList = bkBoardRepository.findAllByMemberIdAndCategory(member.getId(), category);
-//        return ResponseEntity.ok(bkBoardList);
-//    }
     @Transactional
     public ResponseEntity<List<BkBoard>> findAllByMemberIdAndCategory(String category, int page) {
         Member member = tokenProvider.getMemberFromAuthentication();
-        PageRequest pageRequest = PageRequest.of(page, 7, Sort.by("postId").descending());
+        PageRequest pageRequest = PageRequest.of(page, 10, Sort.by("postId").descending());
         Page<BkBoard> bkBoardPage = bkBoardRepository.findAllByMemberIdAndCategory(member.getId(), category, pageRequest);
         List<BkBoard> bkBoardList = bkBoardPage.getContent();
         return ResponseEntity.ok(bkBoardList);
