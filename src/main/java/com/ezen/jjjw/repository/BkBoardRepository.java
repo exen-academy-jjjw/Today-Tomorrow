@@ -3,6 +3,8 @@ package com.ezen.jjjw.repository;
 
 
 import com.ezen.jjjw.domain.entity.BkBoard;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -12,8 +14,10 @@ import java.util.List;
 public interface BkBoardRepository extends JpaRepository<BkBoard, Long> {
 
 
-        List<BkBoard> findAllByMemberId(Long memberId);
-        List<BkBoard> findAllByMemberIdAndCategory(Long memberId, String category);
+//        List<BkBoard> findAllByMemberId(Long memberId);
+        Page<BkBoard> findAllByMemberId(Long memberId, Pageable pageable);
+//        List<BkBoard> findAllByMemberIdAndCategory(Long memberId, String category);
+        Page<BkBoard> findAllByMemberIdAndCategory(Long memberId, String category, Pageable pageable);
 
         Integer countByMemberId(Long memberId);
         Integer countByMemberIdAndCompletion(Long memberId, int completionValue);
