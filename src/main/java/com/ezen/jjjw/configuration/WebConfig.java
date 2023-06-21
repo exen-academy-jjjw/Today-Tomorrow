@@ -1,5 +1,6 @@
 package com.ezen.jjjw.configuration;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
@@ -20,8 +21,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
     // 추가
+    @Value("${spring.servlet.multipart.location}")
+    private String uploadPath;
+
     private String resourcePath = "/review/**"; // view 에서 접근할 경로
-    private String savePath = "file:///C:/upload/"; // 실제 파일 저장 경로(win)
+    private String savePath = "file:///"+ uploadPath; // 실제 파일 저장 경로(win)
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
