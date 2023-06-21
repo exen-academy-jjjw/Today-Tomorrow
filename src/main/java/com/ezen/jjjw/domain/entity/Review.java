@@ -1,6 +1,7 @@
 package com.ezen.jjjw.domain.entity;
 
 import com.ezen.jjjw.dto.request.ReviewRequestDto;
+import com.ezen.jjjw.dto.response.ReviewResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -41,6 +42,11 @@ public class Review extends Timestamped {
 
     @Column(columnDefinition = "LONGTEXT")
     private String reviewContent;
+
+    public static Review toSaveFileEntity(ReviewResponseDto reviewDto) {
+        Review review = new Review();
+        return review;
+    }
 
     public void update(String reviewContent) {
         this.reviewContent = reviewContent;

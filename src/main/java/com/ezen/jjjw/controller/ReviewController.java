@@ -37,8 +37,9 @@ public class ReviewController {
     public ResponseEntity<Integer> createReview(
             @PathVariable Long postId,
             @RequestPart("reviewContent") String reviewContent,
-            @RequestPart(value = "fileUrl", required = false) List<MultipartFile> multipartFiles) {
-        return reviewService.createReview(postId, reviewContent, multipartFiles);
+//            @RequestPart(value = "fileUrl", required = false) List<MultipartFile> multipartFiles
+            @ModelAttribute ReviewResponseDto reviewDto) throws IOException {
+        return reviewService.createReview(postId, reviewContent, reviewDto);
     }
 
     // 리뷰 게시글 상세 GET /review/detail/{postId}

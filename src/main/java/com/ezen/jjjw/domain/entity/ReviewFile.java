@@ -33,10 +33,22 @@ public class ReviewFile extends Timestamped{
     @ManyToOne(fetch = FetchType.LAZY)
     private Review review;
 
-    @Column
-    private String fileUrl;
+//    @Column
+//    private String fileUrl;
 
-    public ReviewFile(String localPath) {
-        this.fileUrl = "C:/upload" + "/" + review;
+    @Column
+    private String originalFileName;
+
+    @Column
+    private String storedFileName;
+
+    public static ReviewFile toBoardFileEntity(Review board, String originalFilename, String storedFileName) {
+        ReviewFile reviewFile = new ReviewFile();
+        return  reviewFile;
     }
+
+
+//    public ReviewFile(String localPath) {
+//        this.fileUrl = "C:/upload" + "/" + review;
+//    }
 }

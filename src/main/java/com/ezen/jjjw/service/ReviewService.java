@@ -47,8 +47,99 @@ public class ReviewService {
     private final FileRepository fileRepository;
 
     // 리뷰 게시글 작성 POST /review/create/{postId}
+//    @Transactional
+//    public ResponseEntity<Integer> createReview(Long postId, String reviewContent,
+////                                                List<MultipartFile> multipartFiles
+//                                                ReviewResponseDto reviewDto) throws IOException {
+//        BkBoard bkBoard = isPresentPost(postId);
+//        if (bkBoard == null) {
+//            log.info("존재하지 않는 게시글");
+//            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
+//        }
+//
+//        int existReview = bkBoard.getExistReview();
+//        if (existReview == 1) {
+//            log.info("리뷰가 존재하는 게시글");
+//            return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
+//        }
+//
+////        Review review = Review.builder()
+////                .reviewContent(reviewContent)
+////                .bkBoard(bkBoard)
+////                .build();
+////        bkBoard.updateExistReview(bkBoard);
+////        bkBoardRepository.save(bkBoard);
+////        reviewRepository.save(review);
+////
+////        log.info("리뷰 작성 성공");
+//
+//        // file
+////        if (multipartFiles != null && !multipartFiles.isEmpty()) {
+////            String folderPath = "C:/tt/";
+////            File localFolder = new File(folderPath);
+////            if (!localFolder.exists() && !localFolder.mkdirs()) {
+////                log.info("폴더 생성 실패");
+////                return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
+////            }
+////
+////            List<String> saveFiles = new ArrayList<>();
+////            for (MultipartFile multipartFile : multipartFiles) {
+////                String fileName = UUID.randomUUID() + "_" + multipartFile.getOriginalFilename();
+////                log.info("fileName : ", fileName);
+////                File savefile = new File(localFolder, fileName);
+////                try {
+////                    multipartFile.transferTo(savefile);
+////                    String fileUrl = localFolder + "/" + fileName;
+////                    saveFiles.add(fileUrl);
+////                } catch (IOException e) {
+////                    log.info("파일 업로드 실패");
+////                    return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
+////                }
+////            }
+////
+////            for (String fileUrl : saveFiles) {
+////                log.info(fileUrl);
+////                ReviewFile reviewFile = ReviewFile.builder()
+////                        .review(review)
+////                        .fileUrl(fileUrl)
+////                        .build();
+////                fileRepository.save(reviewFile);
+////            }
+////        }
+//
+//        // 추가
+//        if(reviewDto.getBoardFile().isEmpty()) {
+//            Review review = Review.builder()
+//                    .reviewContent(reviewContent)
+//                    .bkBoard(bkBoard)
+//                    .build();
+//            bkBoard.updateExistReview(bkBoard);
+//            bkBoardRepository.save(bkBoard);
+//            reviewRepository.save(review);
+//
+//            log.info("리뷰 작성 성공");
+//        } else {
+//            MultipartFile boardFile = reviewDto.getBoardFile(); // 1.
+//            String originalFilename = boardFile.getOriginalFilename(); // 2.
+//            String storedFileName = System.currentTimeMillis() + "_" + originalFilename; // 3.
+//            String savePath = "C:/upload/" + storedFileName; // 4. C:/springboot_img/9802398403948_내사진.jpg
+//            boardFile.transferTo(new File(savePath)); // 5.
+//            Review boardEntity = Review.toSaveFileEntity(reviewDto);
+//            Long savedId = reviewRepository.save(boardEntity).getId();
+//            Review board = reviewRepository.findById(savedId).get();
+//
+//            ReviewFile boardFileEntity = ReviewFile.toBoardFileEntity(board, originalFilename, storedFileName);
+//            fileRepository.save(boardFileEntity);
+//        }
+//
+//
+//
+//        log.info("파일 저장 성공");
+//        return ResponseEntity.ok(HttpServletResponse.SC_OK);
+//    }
+
     @Transactional
-    public ResponseEntity<Integer> createReview(Long postId, String reviewContent, List<MultipartFile> multipartFiles) {
+    public ResponseEntity<Integer> createReview(Long postId, String reviewContent, ReviewResponseDto reviewDto) throws IOException {
         BkBoard bkBoard = isPresentPost(postId);
         if (bkBoard == null) {
             log.info("존재하지 않는 게시글");
@@ -61,54 +152,33 @@ public class ReviewService {
             return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
         }
 
-        Review review = Review.builder()
-                .reviewContent(reviewContent)
-                .bkBoard(bkBoard)
-                .build();
-        bkBoard.updateExistReview(bkBoard);
-        bkBoardRepository.save(bkBoard);
-        reviewRepository.save(review);
+        if (reviewDto.getBoardFile().isEmpty()) {
+            Review review = Review.builder()
+                    .reviewContent(reviewContent)
+                    .bkBoard(bkBoard)
+                    .build();
+            bkBoard.updateExistReview(bkBoard);
+            bkBoardRepository.save(bkBoard);
+            reviewRepository.save(review);
 
-        log.info("리뷰 작성 성공");
+            log.info("리뷰 작성 성공");
+        } else {
+            MultipartFile boardFile = reviewDto.getBoardFile();
+            String originalFilename = boardFile.getOriginalFilename();
+            String storedFileName = System.currentTimeMillis() + "_" + originalFilename;
+            String savePath = "C:/upload/" + storedFileName;
+            boardFile.transferTo(new File(savePath));
+            Review boardEntity = Review.toSaveFileEntity(reviewDto);
+            Long savedId = reviewRepository.save(boardEntity).getId();
+            Review board = reviewRepository.findById(savedId).get();
 
-        // file
-        if (multipartFiles != null && !multipartFiles.isEmpty()) {
-            String folderPath = "C:/upload/" + review.getId();
-            File localFolder = new File(folderPath);
-            if (!localFolder.exists() && !localFolder.mkdirs()) {
-                log.info("폴더 생성 실패");
-                return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
-            }
-
-            List<String> saveFiles = new ArrayList<>();
-            for (MultipartFile multipartFile : multipartFiles) {
-                String fileName = UUID.randomUUID() + "_" + multipartFile.getOriginalFilename();
-                log.info("fileName : ", fileName);
-                File savefile = new File(localFolder, fileName);
-                try {
-                    multipartFile.transferTo(savefile);
-                    String fileUrl = localFolder + "/" + fileName;
-                    saveFiles.add(fileUrl);
-                } catch (IOException e) {
-                    log.info("파일 업로드 실패");
-                    return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
-                }
-            }
-
-            for (String fileUrl : saveFiles) {
-                log.info(fileUrl);
-                ReviewFile reviewFile = ReviewFile.builder()
-                        .review(review)
-                        .fileUrl(fileUrl)
-                        .build();
-                fileRepository.save(reviewFile);
-            }
+            ReviewFile boardFileEntity = ReviewFile.toBoardFileEntity(board, originalFilename, storedFileName);
+            fileRepository.save(boardFileEntity);
         }
+
         log.info("파일 저장 성공");
         return ResponseEntity.ok(HttpServletResponse.SC_OK);
     }
-
-
 
 
     @Transactional(readOnly = true)
@@ -136,19 +206,19 @@ public class ReviewService {
         Review findReview = bkBoard.getReview();
         List<ReviewFile> reviewFIle = fileRepository.findAllByReviewId(findReview.getId());
 
-        List<String> imageList = new ArrayList<>();
-        for (ReviewFile image : reviewFIle) {
-            imageList.add(image.getFileUrl());
-        }
-
-        ReviewResponseDto reviewResponseDto = ReviewResponseDto.builder()
-                .id(findReview.getId())
-                .postId(findReview.getBkBoard().getPostId())
-                .fileUrlList(imageList)
-                .reviewContent(findReview.getReviewContent())
-                .createdAt(findReview.getCreatedAt())
-                .modifiedAt(findReview.getModifiedAt())
-                .build();
+//        List<String> imageList = new ArrayList<>();
+//        for (ReviewFile image : reviewFIle) {
+//            imageList.add(image.getFileUrl());
+//        }
+//
+//        ReviewResponseDto reviewResponseDto = ReviewResponseDto.builder()
+//                .id(findReview.getId())
+//                .postId(findReview.getBkBoard().getPostId())
+//                .fileUrlList(imageList)
+//                .reviewContent(findReview.getReviewContent())
+//                .createdAt(findReview.getCreatedAt())
+//                .modifiedAt(findReview.getModifiedAt())
+//                .build();
 
         // file
         List<ReviewFile> allReviewFiles = fileRepository.findByReviewIdOrderByModifiedAtDesc(findReview.getId());
@@ -163,14 +233,17 @@ public class ReviewService {
                     FileResponseDto.builder()
                             .id(reviewFile.getId())
                             .reviewId(reviewFile.getReview().getId())
-                            .fileUrl(reviewFile.getFileUrl())
+                            .originalFileName(reviewFile.getOriginalFileName())
+                            .storedFileName(reviewFile.getStoredFileName())
+//                            .fileUrl(reviewFile.getFileUrl())
                             .createdAt(reviewFile.getCreatedAt())
                             .modifiedAt(reviewFile.getModifiedAt())
                             .build()
             );
         }
 
-        return ResponseEntity.ok(reviewResponseDto);
+//        return ResponseEntity.ok(reviewResponseDto);
+        return null;
     }
 
     // 리뷰 게시글 수정 PUT /review/update/{postId}
@@ -207,59 +280,59 @@ public class ReviewService {
             // DB 속의 리뷰 파일 리스트와 사용자로부터 받은 파일 리스트의 파일명 비교
             for (ReviewFile oriFile : reviewFileList) {
                 // 프론트가 보내준 파일명 리스트가 위의 oriFile을 포함하고 있지 않다면
-                if (!reviewRequestDto.getFileUrlList().contains(oriFile.getFileUrl())) {
-                    String filePath = oriFile.getFileUrl();
-                    File deleteFile = new File(filePath);
-                    deleteFile.delete();
-                    fileRepository.delete(oriFile);
-                }
+//                if (!reviewRequestDto.getFileUrlList().contains(oriFile.getFileUrl())) {
+//                    String filePath = oriFile.getFileUrl();
+//                    File deleteFile = new File(filePath);
+//                    deleteFile.delete();
+//                    fileRepository.delete(oriFile);
+//                }
             }
 
             // 사용자가 새로 보내는 사진 중에 위와 겹치는 게 없다면 해당 파일은 저장
             String folderPath = "C:/upload/" + findReview.getId();
             File localFolder = new File(folderPath);
 
-            try {
-                if (!localFolder.exists() && !localFolder.mkdirs()) {
-                    log.info("폴더 생성 실패");
-                    return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
-                }
-
-                for (MultipartFile newFile : multipartFiles) {
-                    // 새로 들어온 파일명 앞에 UUID 포함해 다시 저장
-                    String fileName = UUID.randomUUID() + "_" + newFile.getOriginalFilename();
-                    String fileUrl = folderPath + "/" + fileName;
-                    // 새로 보내는 파일이 DB에 이미 존재하는지 확인
-                    boolean existsInDB = false;
-                    for (ReviewFile oriFile : reviewFileList) {
-                        if (oriFile.getFileUrl().equals(fileUrl)) {
-                            existsInDB = true;
-                            break;
-                        }
-                    }
+//            try {
+//                if (!localFolder.exists() && !localFolder.mkdirs()) {
+//                    log.info("폴더 생성 실패");
+//                    return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
+//                }
+//
+//                for (MultipartFile newFile : multipartFiles) {
+//                    // 새로 들어온 파일명 앞에 UUID 포함해 다시 저장
+//                    String fileName = UUID.randomUUID() + "_" + newFile.getOriginalFilename();
+//                    String fileUrl = folderPath + "/" + fileName;
+//                    // 새로 보내는 파일이 DB에 이미 존재하는지 확인
+//                    boolean existsInDB = false;
+//                    for (ReviewFile oriFile : reviewFileList) {
+//                        if (oriFile.getFileUrl().equals(fileUrl)) {
+//                            existsInDB = true;
+//                            break;
+//                        }
+//                    }
                     // DB에 없는 파일만 저장
-                    if (!existsInDB) {
-                        File saveFile = new File(localFolder, fileName);
-                        newFile.transferTo(saveFile);
-                        // DB에 저장
-                        ReviewFile upreviewFile = ReviewFile.builder()
-                                .review(findReview)
-                                .fileUrl(fileUrl)
-                                .build();
-                        fileRepository.save(upreviewFile);
-                    }
-                }
-            } catch (IOException e) {
-                log.info("파일 업로드 실패");
-                return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
-            }
-        } else {
-            for (ReviewFile oriFile : reviewFileList) {
-                // 프론트가 보내준 파일명 리스트가 위의 oriFile을 포함하고 있지 않다면
-                if (!reviewRequestDto.getFileUrlList().contains(oriFile.getFileUrl())) {
-                    fileRepository.delete(oriFile);
-                }
-            }
+//                    if (!existsInDB) {
+//                        File saveFile = new File(localFolder, fileName);
+//                        newFile.transferTo(saveFile);
+//                        // DB에 저장
+//                        ReviewFile upreviewFile = ReviewFile.builder()
+//                                .review(findReview)
+//                                .fileUrl(fileUrl)
+//                                .build();
+//                        fileRepository.save(upreviewFile);
+//                    }
+//                }
+//            } catch (IOException e) {
+//                log.info("파일 업로드 실패");
+//                return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
+//            }
+//        } else {
+//            for (ReviewFile oriFile : reviewFileList) {
+//                // 프론트가 보내준 파일명 리스트가 위의 oriFile을 포함하고 있지 않다면
+//                if (!reviewRequestDto.getFileUrlList().contains(oriFile.getFileUrl())) {
+//                    fileRepository.delete(oriFile);
+//                }
+//            }
         }
         log.info("파일 수정 성공");
         return ResponseEntity.ok(HttpServletResponse.SC_OK);
