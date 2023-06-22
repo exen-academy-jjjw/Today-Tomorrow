@@ -1,5 +1,6 @@
 package com.ezen.jjjw.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,6 +30,7 @@ public class ReviewFile extends Timestamped{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @JoinColumn(name = "review_table_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Review review;

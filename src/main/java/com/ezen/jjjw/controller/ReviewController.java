@@ -37,7 +37,7 @@ public class ReviewController {
     public ResponseEntity<Integer> createReview(
             @PathVariable Long postId,
             @RequestPart("reviewContent") String reviewContent,
-            @RequestPart(value = "fileUrl", required = false) List<MultipartFile> multipartFiles) {
+            @RequestPart(value = "fileUrl", required = false) List<MultipartFile> multipartFiles) throws IOException {
         return reviewService.createReview(postId, reviewContent, multipartFiles);
     }
 
@@ -50,9 +50,9 @@ public class ReviewController {
     // 리뷰 게시글 수정 PUT /review/update/{postId}
     @PutMapping(value = "/update/{postId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
     public ResponseEntity<?> updateReview(@PathVariable Long postId,
-                                          @RequestPart(value = "data") ReviewRequestDto reviewRequestDto,
+                                          @ModelAttribute ReviewRequestDto reviewRequestDto,
                                           @RequestPart(value = "fileUrl", required = false) List<MultipartFile> multipartFiles
-                                          ) throws IOException {
+                                          ) {
        return reviewService.updateSave(postId, reviewRequestDto, multipartFiles);
     }
 
