@@ -30,15 +30,15 @@ public class BkBoardController {
         return bkBoardService.update(postId, bkrequest);
     }
 
-    // list
+    //list
     @GetMapping("/list")
-    public ResponseEntity<List<BkBoard>> getAllBkBoardDto(){
-        return bkBoardService.getAllBkBoardDto();
+    public ResponseEntity<List<BkBoard>> getAllBkBoardDto(@RequestParam("page") int page){
+        return bkBoardService.getAllBkBoardDto(page);
     }
 
     @GetMapping("/list/{category}")
-    public ResponseEntity<List<BkBoard>> findAllByMemberIdAndCategory(@PathVariable String category){
-        return bkBoardService.findAllByMemberIdAndCategory(category);
+    public ResponseEntity<List<BkBoard>> findAllByMemberIdAndCategory(@PathVariable String category, @RequestParam("page") int page){
+        return bkBoardService.findAllByMemberIdAndCategory(category, page);
     }
 
     @DeleteMapping("/delete/{postId}")

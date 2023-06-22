@@ -1,5 +1,6 @@
 package com.ezen.jjjw.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,26 +30,15 @@ public class ReviewFile extends Timestamped{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @JsonIgnore
     @JoinColumn(name = "review_table_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Review review;
 
-//    @Column
-//    private String fileUrl;
-
     @Column
-    private String originalFileName;
+    private String fileUrl;
 
-    @Column
-    private String storedFileName;
-
-    public static ReviewFile toBoardFileEntity(Review board, String originalFilename, String storedFileName) {
-        ReviewFile reviewFile = new ReviewFile();
-        return  reviewFile;
+    public ReviewFile(String localPath) {
+        this.fileUrl = "C:/upload" + "/" + review;
     }
-
-
-//    public ReviewFile(String localPath) {
-//        this.fileUrl = "C:/upload" + "/" + review;
-//    }
 }

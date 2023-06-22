@@ -1,7 +1,6 @@
 package com.ezen.jjjw.domain.entity;
 
-import com.ezen.jjjw.dto.request.ReviewRequestDto;
-import com.ezen.jjjw.dto.response.ReviewResponseDto;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,19 +36,14 @@ public class Review extends Timestamped {
     @OneToOne(fetch = FetchType.LAZY)
     private BkBoard bkBoard;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "review", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<ReviewFile> reviewFileList = new ArrayList<>();
 
     @Column(columnDefinition = "LONGTEXT")
     private String reviewContent;
 
-    public static Review toSaveFileEntity(ReviewResponseDto reviewDto) {
-        Review review = new Review();
-        return review;
+    public void update(String reviewRequestDto) {
+        this.reviewContent = reviewRequestDto;
     }
-
-    public void update(String reviewContent) {
-        this.reviewContent = reviewContent;
-    }
-
 }
