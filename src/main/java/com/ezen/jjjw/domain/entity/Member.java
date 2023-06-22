@@ -1,5 +1,6 @@
 package com.ezen.jjjw.domain.entity;
 
+import com.ezen.jjjw.dto.request.MypageRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +10,8 @@ import org.hibernate.Hibernate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -54,6 +57,10 @@ public class Member extends Timestamped {
     @OneToOne(mappedBy = "member", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
     private RefreshToken refreshTokenList = new RefreshToken();
 
+//    @JsonIgnore
+//    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+//    private List<BkBoard> bkBoardList = new ArrayList<>();
+
     // DB에 들어있는 비밀번호와 입력받은 비밀번호의 일치 여부를 확인할 때 사용
     public boolean validatePassword(PasswordEncoder passwordEncoder, String password) {
         return passwordEncoder.matches(password, this.password);
@@ -70,5 +77,13 @@ public class Member extends Timestamped {
         }
         Member member = (Member) o;
         return id != null && Objects.equals(id, member.id);
+    }
+
+    public void updateNickname(MypageRequestDto request) {
+        this.nickname = request.getNickname();
+    }
+
+    public void updatePassword(PasswordEncoder passwordEncoder, MypageRequestDto request) {
+        this.password = passwordEncoder.encode(request.getNewPassword());
     }
 }

@@ -36,7 +36,7 @@ public class MemberController {
 
     // 회원가입
     @PostMapping(value = "/signup")
-    public ResponseEntity<?> signup(@RequestBody @Valid MemberSignupReqDto memberSignupReqDto) {
+    public ResponseEntity<Integer> signup(@RequestBody @Valid MemberSignupReqDto memberSignupReqDto) {
         return memberService.createMember(memberSignupReqDto);
     }
 
@@ -48,16 +48,15 @@ public class MemberController {
 
     // 로그아웃, 사용자로부터 받아야할 정보가 따로 없는 대신 토큰을 봐야하기때문에 HttpServletRequest만 파라미터로 입력한다.
     @GetMapping(value = "/logout")
-    public ResponseEntity<?> logout() {
+    public ResponseEntity<Integer> logout() {
         Member member = tokenProvider.getMemberFromAuthentication();
         return memberService.logout(member);
     }
 
     // 회원 탈퇴
     @PostMapping(value = "/delete")
-    public ResponseEntity<?> delete(@RequestBody @Valid MemberDeleteReqDto memberDeleteReqDto) {
+    public ResponseEntity<Integer> delete(@RequestBody @Valid MemberDeleteReqDto memberDeleteReqDto) {
         Member member = tokenProvider.getMemberFromAuthentication();
         return memberService.delete(memberDeleteReqDto, member);
     }
-
 }

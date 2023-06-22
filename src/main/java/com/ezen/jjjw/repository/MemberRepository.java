@@ -22,4 +22,7 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<Member, Long> {
     Optional<Member> findByMemberId(String memberId);
 
+    /** bkBoard memberId 정수꺼 */
+    Object getByMemberId(String memberId);
+
 }
