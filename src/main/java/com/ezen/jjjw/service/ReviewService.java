@@ -255,59 +255,6 @@ public class ReviewService {
 //            }
 //        }
 
-
-
-        //이미지 수정 및 재등록 기능
-//        List<String> imageList = new ArrayList<>();
-
-        //새로 등록하는 이미지가 없는 경우
-//        if(multipartFiles == null){
-//            for(PostImage postImages : postImage){
-//                if(!request.getImageUrl().contains(postImages.getImageUrl())){
-//                    //S3저장소에서 삭제
-//                    String name = URLDecoder.decode(postImages.getImageUrl().substring(postImages.getImageUrl().lastIndexOf("/") + 1), StandardCharsets.UTF_8);
-//                    amazonS3Service.deleteFile("bucket/" + name);
-//                    //DB 이미지 삭제
-//                    fileRepository.delete(postImages);
-//                } else {
-//                    //있는 이미지면 다시 저장
-//                    imageList.add(postImages.getImageUrl());
-//                }
-//            }
-//            // 새로 등록하는 이미지가 있는 경우
-//        } else {
-//            //기존에 등록된 이미지 처리
-//            for(PostImage postImages : postImage){
-//                if(!request.getImageUrl().contains(postImages.getImageUrl())){
-//                    //S3저장소에서 삭제
-//                    String name = URLDecoder.decode(postImages.getImageUrl().substring(postImages.getImageUrl().lastIndexOf("/") + 1), StandardCharsets.UTF_8);
-//                    amazonS3Service.deleteFile("bucket/" + name);
-//                    //DB 이미지 삭제
-//                    postImageRepository.delete(postImages);
-//                } else {
-//                    //있는 이미지면 다시 저장
-//                    imageList.add(postImages.getImageUrl());
-//                }
-//            }
-//
-//            //새로운 이미지 등록
-//            List<String> imageUrlList;
-//            imageUrlList = amazonS3Service.upload(multipartFiles, "bucket");
-//            List<PostImage> saveImage = new ArrayList<>();
-//            for(String postImages : imageUrlList){
-//                PostImage image = PostImage.builder()
-//                        .post(post)
-//                        .member(member)
-//                        .imageUrl(postImages)
-//                        .build();
-//                saveImage.add(image);
-//                imageList.add(image.getImageUrl());
-//            }
-//            postImageRepository.saveAll(saveImage);
-//        }
-
-
-
         return ResponseEntity.ok(HttpServletResponse.SC_OK);
     }
 
@@ -332,18 +279,23 @@ public class ReviewService {
         reviewRepository.delete(findReview);
         log.info("리뷰 삭제 성공");
 
-        // 리뷰에 파일이 존재한다면 로컬에 있는 파일 폴더 삭제
-        String folderPath = "C:/upload/" + findReview.getId();
-        File localFolder = new File(folderPath);
-        if (localFolder.exists()) {
-            try {
-                FileUtils.deleteDirectory(localFolder);
-            } catch (IOException e) {
-                log.info("폴더 삭제 실패");
-                return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
-            }
+        // 게시글로부터 타고 들어가 뽑아온 리뷰 파일 리스트
+        List<ReviewFile> reviewFileList = bkBoard.getReview().getReviewFileList();
+
+        // DB 속의 리뷰 파일 리스트와 사용자로부터 받은 파일 리스트의 파일명 비교
+        for (ReviewFile oriFile : reviewFileList) {
+            log.info("파일 = {}",oriFile.getFileUrl());
+            // S3저장소에서 삭제
+            String name = URLDecoder.decode(oriFile.getFileUrl().substring(oriFile.getFileUrl().lastIndexOf("/") + 1), StandardCharsets.UTF_8);
+            amazonS3Service.deleteFile("bucket/" + name);
+            // DB 이미지 삭제
+            fileRepository.delete(oriFile);
         }
-        log.info("폴더 삭제 성공");
+
+        bkBoard.deleteExistReview(bkBoard);
+        bkBoardRepository.save(bkBoard);
+
+        log.info("이미지 삭제 성공");
         return ResponseEntity.ok(HttpServletResponse.SC_OK);
     }
 }
