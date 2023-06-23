@@ -1,0 +1,32 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: "url 주소 입력"
+    username: "username 입력"
+    password: "비밀번호 입력"
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
+
+jwt:
+  secret: 4oCYc3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LWhhbmdoYWUtYXNzaWdubWVudC1zcHJpbmctYm9vdC1zZWN1cml0eS1qd3Qtc2VjcmV0LWtleeKAmQo=
+axios:
+  defaults:
+    headers['Access-Control-Allow-Origin']: '*'
+    withCredentials: true
+
+cloud:
+  aws:
+    s3:
+      bucket: "S3버킷 이름 입력"
+    credentials:
+      access-key: "access-key 입력"
+      secret-key: "secret-key 입력"
+    region:
+      static: "S3버킷 생성시 나오는 지역 입력"
+    stack:
+      auto: false
