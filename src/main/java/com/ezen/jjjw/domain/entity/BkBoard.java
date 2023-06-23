@@ -71,4 +71,8 @@ public class BkBoard extends Timestamped {
         public void updateExistReview(BkBoard bkBoard){
                 this.existReview = 1;
         }
+
+        public void deleteExistReview(BkBoard bkBoard){
+                this.existReview = 0;
+        }
 }
