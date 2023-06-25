@@ -37,8 +37,4 @@ public class ReviewFile extends Timestamped{
 
     @Column
     private String fileUrl;
-
-    public ReviewFile(String localPath) {
-        this.fileUrl = "C:/upload" + "/" + review;
-    }
 }
