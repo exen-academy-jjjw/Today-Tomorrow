@@ -29,7 +29,5 @@ public class ReviewRequestDto {
 
     private String reviewContent;
 
-//    private BkBoard bkBoard;
-
     private List<String> fileUrlList;
 }
