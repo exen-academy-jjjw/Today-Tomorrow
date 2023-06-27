@@ -1,7 +1,6 @@
 package com.ezen.jjjw.controller;
 
 import com.ezen.jjjw.dto.request.ReviewRequestDto;
-import com.ezen.jjjw.dto.response.ReviewResponseDto;
 import com.ezen.jjjw.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
@@ -9,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
 import java.io.IOException;
 import java.util.List;
 

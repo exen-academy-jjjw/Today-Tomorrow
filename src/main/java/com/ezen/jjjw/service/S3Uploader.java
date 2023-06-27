@@ -52,7 +52,6 @@ public class S3Uploader {
         return imageLists;
     }
 
-
     //단일 이미지
     // 1. MultipartFile을 전달받아 File로 전환한 후에 S3에 업로드
     @Transactional
@@ -66,7 +65,6 @@ public class S3Uploader {
         return uploads(uploadFile, dirName);
     }
 
-
     // 2. S3에 파일 업로드 하기
     //    fileName = S3에 저장되는 파일이름(randomUUID는 파일이 덮어씌워지지 않기 위함)
     //    1번을 진행하면서 로컬에 생성된 파일을 삭제까지 하는 프로세스
@@ -78,7 +76,6 @@ public class S3Uploader {
 
         return uploadImageUrl;
     }
-
 
     // 1-1. 로컬에 파일 저장하기! MultipartFile에서 File로 변환함
     //      getProperty(이곳) 이곳에 File이 생성됨(경로가 잘못되면 생성 불가능)
@@ -94,7 +91,6 @@ public class S3Uploader {
         return Optional.empty();
     }
 
-
     // 2-1. PublicRead 권한으로 업로드
     private String putS3(File uploadFile, String fileName) {
         amazonS3Client.putObject(
@@ -103,7 +99,6 @@ public class S3Uploader {
 
         return amazonS3Client.getUrl(bucket, fileName).toString();
     }
-
 
     // 2-2. 로컬에 저장된 이미지 삭제
     private void removeNewFile(File targetFile) {
@@ -142,7 +137,6 @@ public class S3Uploader {
         }
     }
 
-
     public void deleteFile(String filename) {
         log.info("filename = {}", filename );
         final AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion(region).build();
@@ -151,7 +145,5 @@ public class S3Uploader {
         } catch (AmazonServiceException e) {
             System.err.println(e.getErrorMessage());
         }
-
-
     }
 }

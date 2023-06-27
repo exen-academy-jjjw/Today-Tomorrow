@@ -1,14 +1,15 @@
 package com.ezen.jjjw.controller;
 
 import com.ezen.jjjw.domain.entity.BkBoard;
+import com.ezen.jjjw.domain.entity.Member;
 import com.ezen.jjjw.dto.BkBoardDto;
+import com.ezen.jjjw.jwt.TokenProvider;
 import com.ezen.jjjw.service.BkBoardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 
@@ -17,28 +18,19 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/post")
 public class BkBoardController {
+
     private  final BkBoardService bkBoardService;
+    private final TokenProvider tokenProvider;
 
     @PostMapping("/create")
     public ResponseEntity<Long> create(@RequestBody BkBoardDto.Request bkrequest) {
-        return bkBoardService.create(bkrequest);
+        Member member = tokenProvider.getMemberFromAuthentication();
+        return bkBoardService.create(bkrequest, member);
     }
 
-    // update
     @PutMapping("/update/{postId}")
     public ResponseEntity<Integer> update(@PathVariable("postId") Long postId, @RequestBody BkBoardDto.UpdateRequest bkrequest) {
         return bkBoardService.update(postId, bkrequest);
-    }
-
-    //list
-    @GetMapping("/list")
-    public ResponseEntity<List<BkBoard>> getAllBkBoardDto(@RequestParam("page") int page){
-        return bkBoardService.getAllBkBoardDto(page);
-    }
-
-    @GetMapping("/list/{category}")
-    public ResponseEntity<List<BkBoard>> findAllByMemberIdAndCategory(@PathVariable String category, @RequestParam("page") int page){
-        return bkBoardService.findAllByMemberIdAndCategory(category, page);
     }
 
     @DeleteMapping("/delete/{postId}")
@@ -47,11 +39,22 @@ public class BkBoardController {
     }
 
     @GetMapping("/detail/{postId}")
-    public ResponseEntity<?> detail(@PathVariable("postId") Long postId, Integer existReview) {
+    public ResponseEntity<?> detail(@PathVariable("postId") Long postId) {
         return bkBoardService.getBkBoardById(postId);
     }
 
-    /*compleetion 관련 코드 추가*/
+    @GetMapping("/list")
+    public ResponseEntity<List<BkBoard>> getAllBkBoardDto(@RequestParam("page") int page){
+        Member member = tokenProvider.getMemberFromAuthentication();
+        return bkBoardService.getAllBkBoardDto(page, member);
+    }
+
+    @GetMapping("/list/{category}")
+    public ResponseEntity<List<BkBoard>> findAllByMemberIdAndCategory(@PathVariable String category, @RequestParam("page") int page){
+        Member member = tokenProvider.getMemberFromAuthentication();
+        return bkBoardService.findAllByMemberIdAndCategory(category, page, member);
+    }
+
     @PutMapping("/completion/{postId}")
     public ResponseEntity<Integer> updateCompletion(@PathVariable("postId") Long postId, @RequestBody BkBoardDto.RequestCompletion requestCompletion) {
         return bkBoardService.updateCompletion(postId, requestCompletion);

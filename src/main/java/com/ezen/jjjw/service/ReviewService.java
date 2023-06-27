@@ -6,6 +6,7 @@ import com.ezen.jjjw.domain.entity.ReviewFile;
 import com.ezen.jjjw.dto.request.ReviewRequestDto;
 import com.ezen.jjjw.dto.response.FileResponseDto;
 import com.ezen.jjjw.dto.response.ReviewResponseDto;
+import com.ezen.jjjw.exception.CustomExceptionHandler;
 import com.ezen.jjjw.repository.BkBoardRepository;
 import com.ezen.jjjw.repository.FileRepository;
 import com.ezen.jjjw.repository.ReviewRepository;
@@ -44,15 +45,13 @@ public class ReviewService {
     private final FileRepository fileRepository;
 
     private final S3Uploader amazonS3Service;
+    private final CustomExceptionHandler customExceptionHandler;
 
     // 리뷰 게시글 작성 POST /review/create/{postId}
     @Transactional
     public ResponseEntity<Integer> createReview(Long postId, String reviewContent, List<MultipartFile> multipartFiles) throws IOException {
         BkBoard bkBoard = isPresentPost(postId);
-        if (bkBoard == null) {
-            log.info("존재하지 않는 게시글");
-            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
-        }
+        customExceptionHandler.getNotFoundBoardStatus(bkBoard);
 
         int existReview = bkBoard.getExistReview();
         if (existReview == 1) {
@@ -93,21 +92,15 @@ public class ReviewService {
 
 
     // 리뷰 게시글 상세 GET /review/detail/{postId}
+
     @Transactional(readOnly = true)
     public ResponseEntity<?> findByPostId(Long postId) {
 
         BkBoard bkBoard = isPresentPost(postId);
-        if (null == bkBoard) {
-            log.info("존재하지 않는 게시글");
-            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
-        }
+        customExceptionHandler.getNotFoundBoardStatus(bkBoard);
 
-        int existReview = bkBoard.getExistReview();
+        customExceptionHandler.getNotFoundReviewStatusOrgetReview(bkBoard);
         Review findReview = bkBoard.getReview();
-        if (existReview == 0 || null == findReview) {
-            log.info("존재하지 않는 리뷰");
-            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
-        }
 
         List<ReviewFile> reviewFIle = fileRepository.findAllByReviewId(findReview.getId());
 
@@ -149,27 +142,20 @@ public class ReviewService {
         return ResponseEntity.ok(reviewResponseDto);
     }
 
-
     // 리뷰 게시글 수정 PUT /review/update/{postId}
+
     @Transactional
     public ResponseEntity<?> updateSave(Long postId, ReviewRequestDto reviewRequestDto, List<MultipartFile> multipartFiles) {
 
         // 게시글 유효성 검증
         BkBoard bkBoard = isPresentPost(postId);
-        if (null == bkBoard) {
-            log.info("존재하지 않는 게시글");
-            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
-        }
+        customExceptionHandler.getNotFoundBoardStatus(bkBoard);
 
         // 리뷰 유효성 검증
-        int existReview = bkBoard.getExistReview();
-        if (existReview == 0) {
-            log.info("존재하지 않는 리뷰");
-            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
-        }
+        customExceptionHandler.getNotFoundReviewStatusOrgetReview(bkBoard);
+        Review findReview = bkBoard.getReview();
 
         // reviewContent 업데이트
-        Review findReview = bkBoard.getReview();
         findReview.update(reviewRequestDto.getReviewContent());
         reviewRepository.save(findReview.getBkBoard().getReview());
         log.info("리뷰 수정 성공");
@@ -177,24 +163,17 @@ public class ReviewService {
         return ResponseEntity.ok(HttpServletResponse.SC_OK);
     }
 
-
     // 리뷰 게시글 삭제 DELETE /review/delete/{postId}
+
     @Transactional
     public ResponseEntity<Integer> deleteByReviewId(Long postId) {
 
         BkBoard bkBoard = isPresentPost(postId);
-        if (null == bkBoard) {
-            log.info("존재하지 않는 게시글");
-            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
-        }
+        customExceptionHandler.getNotFoundBoardStatus(bkBoard);
 
-        int existReview = bkBoard.getExistReview();
-        if (existReview == 0) {
-            log.info("존재하지 않는 리뷰");
-            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
-        }
-
+        customExceptionHandler.getNotFoundReviewStatusOrgetReview(bkBoard);
         Review findReview = bkBoard.getReview();
+
         reviewRepository.delete(findReview);
         log.info("리뷰 삭제 성공");
 
