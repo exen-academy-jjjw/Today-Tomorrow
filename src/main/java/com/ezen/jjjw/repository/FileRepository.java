@@ -10,7 +10,6 @@ import java.util.List;
 @Repository
 public interface FileRepository extends JpaRepository<ReviewFile, Long> {
     List<ReviewFile> findByReviewIdOrderByModifiedAtDesc(Long reviewId);
-
     List<ReviewFile> findAllByReviewId(Long id);
 }
 

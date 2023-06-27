@@ -1,6 +1,5 @@
 package com.ezen.jjjw.domain.entity;
 
-
 import com.ezen.jjjw.dto.BkBoardDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
@@ -10,7 +9,6 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
-
 
 @Entity
 @Builder
