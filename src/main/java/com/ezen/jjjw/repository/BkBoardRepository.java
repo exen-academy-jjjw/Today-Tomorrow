@@ -13,12 +13,8 @@ import java.util.List;
 @Repository
 public interface BkBoardRepository extends JpaRepository<BkBoard, Long> {
 
-
-//        List<BkBoard> findAllByMemberId(Long memberId);
         Page<BkBoard> findAllByMemberId(Long memberId, Pageable pageable);
-//        List<BkBoard> findAllByMemberIdAndCategory(Long memberId, String category);
         Page<BkBoard> findAllByMemberIdAndCategory(Long memberId, String category, Pageable pageable);
-
         Integer countByMemberId(Long memberId);
         Integer countByMemberIdAndCompletion(Long memberId, int completionValue);
 

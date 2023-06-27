@@ -42,7 +42,6 @@ public class JwtService {
         String accessToken = tokenProvider.resolveToken(request);
         Member member = memberRepository.findByMemberId(tokenProvider.getClaimsMemberId(accessToken)).get();
         if (null == member) {
-//            throw new CustomException(ErrorCode.NOT_FOUND_USER);
             log.info("존재하지 않는 사용자");
             return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
         }
@@ -50,7 +49,6 @@ public class JwtService {
         // 리프레시 토큰 유효성 검증
         RefreshToken refreshToken = tokenProvider.isPresentRefreshToken(member);
         if (!refreshToken.getValue().equals(request.getHeader("RefreshToken"))) {
-//            throw new CustomException(ErrorCode.INVALID_TOKEN);
             log.info("유효하지 않는 토큰");
             return ResponseEntity.ok(HttpServletResponse.SC_UNAUTHORIZED);
         }
@@ -60,7 +58,6 @@ public class JwtService {
         // 리프레시 토큰도 새로 발급해 DB에 저장
         refreshToken.updateValue(tokenDto.getRefreshToken());
         tokenProvider.tokenToHeaders(tokenDto, response);
-//        return ResponseEntity.ok("success");
         log.info("토큰 재발급 성공");
         return ResponseEntity.ok(HttpServletResponse.SC_OK);
     }
