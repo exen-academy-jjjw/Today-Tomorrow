@@ -17,6 +17,7 @@ import javax.transaction.Transactional;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 @Component
@@ -114,25 +115,25 @@ public class S3Uploader {
         // tika를 이용해 파일 MIME 타입 체크
         // 파일명에 .jpg 식으로 붙는 확장자는 없앨 수도 있고 조작도 가능하므로 MIME 타입을 체크하는 것이 좋다.
         Tika tika = new Tika();
-        String mimeType = tika.detect(multipartFile.getInputStream());
-
-        // MIME타입이 이미지가 아니면 exception 발생
-        if (!mimeType.startsWith("image/")) {
-            throw new IllegalStateException("이미지 파일이 아닙니다");
+        try (InputStream inputStream = multipartFile.getInputStream()) {
+            String mimeType = tika.detect(inputStream);
+            if (!mimeType.startsWith("image/")) {
+                throw new IllegalStateException("이미지 파일이 아닙니다");
+            }
         }
-
     }
 
     // 이미지 파일인지 확인하는 메소드(다중이미지)
-    private void isImage(List<MultipartFile> multipartFile) throws IOException {
+    private void isImage(List<MultipartFile> multipartFiles) throws IOException {
         // tika를 이용해 파일 MIME 타입 체크
         // 파일명에 .jpg 식으로 붙는 확장자는 없앨 수도 있고 조작도 가능하므로 MIME 타입을 체크하는 것이 좋다.
         Tika tika = new Tika();
-        for(int i=0; i< multipartFile.size(); i++){
-            String mimeType = tika.detect(multipartFile.get(i).getInputStream());
-            // MIME타입이 이미지가 아니면 exception 발생
-            if (!mimeType.startsWith("image/")) {
-                throw new IllegalStateException("이미지 파일이 아닙니다");
+        for (MultipartFile multipartFile : multipartFiles) {
+            try (InputStream inputStream = multipartFile.getInputStream()) {
+                String mimeType = tika.detect(inputStream);
+                if (!mimeType.startsWith("image/")) {
+                    throw new IllegalStateException("이미지 파일이 아닙니다");
+                }
             }
         }
     }
