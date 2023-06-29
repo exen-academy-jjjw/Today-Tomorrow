@@ -165,25 +165,8 @@ public class ReviewService {
         // file 관련 코드
         // 사용자로부터 받은 파일이 null이 아닐 경우에만 다음 로직 실행
         if (multipartFiles != null && !multipartFiles.isEmpty()) {
-            if (reviewRequestDto.getFileUrlList() != null) {
-                // DB 속의 리뷰 파일 리스트와 사용자로부터 받은 파일 리스트의 파일명 비교
-                for (ReviewFile oriFile : reviewFileList) {
-                    log.info("저장파일 ={}", oriFile);
-                    // 프론트가 보내준 파일명 리스트가 위의 oriFile을 포함하고 있지 않다면
-                    if (!multipartFiles.contains(oriFile.getFileUrl())) {
-                        //S3저장소에서 삭제
-                        String name = URLDecoder.decode(oriFile.getFileUrl().substring(oriFile.getFileUrl().lastIndexOf("/") + 1), StandardCharsets.UTF_8);
-                        amazonS3Service.deleteFile("bucket/" + name);
-                        //DB 이미지 삭제
-                        fileRepository.delete(oriFile);
-                    }
-                }
-            }
-
             // 사용자가 새로 보내는 사진 중에 위와 겹치는 게 없다면 해당 파일은 저장
             for (MultipartFile newFile : multipartFiles) {
-                log.info("새파일 ={}", newFile);
-
                 // 새로 보내는 파일이 DB에 이미 존재하는지 확인
                 boolean existsInDB = false;
                 for (ReviewFile oriFile : reviewFileList) {
@@ -198,8 +181,6 @@ public class ReviewService {
                     imageUrlList = amazonS3Service.upload(multipartFiles, "bucket");
                     List<ReviewFile> saveImages = new ArrayList<>();
                     for (String fileUrl : imageUrlList) {
-                        log.info("이미지 fileUrl ={}", fileUrl);
-
                         ReviewFile image = ReviewFile.builder()
                                 .review(findReview)
                                 .fileUrl(fileUrl)
@@ -207,21 +188,6 @@ public class ReviewService {
                         saveImages.add(image);
                     }
                     fileRepository.saveAll(saveImages);
-                }
-            }
-        } else {
-            if (reviewRequestDto.getFileUrlList() != null) {
-                // DB 속의 리뷰 파일 리스트와 사용자로부터 받은 파일 리스트의 파일명 비교
-                for (ReviewFile oriFile : reviewFileList) {
-                    log.info("저장파일 ={}", oriFile);
-                    // 프론트가 보내준 파일명 리스트가 위의 oriFile을 포함하고 있지 않다면
-                    if (!multipartFiles.contains(oriFile.getFileUrl())) {
-                        //S3저장소에서 삭제
-                        String name = URLDecoder.decode(oriFile.getFileUrl().substring(oriFile.getFileUrl().lastIndexOf("/") + 1), StandardCharsets.UTF_8);
-                        amazonS3Service.deleteFile("bucket/" + name);
-                        //DB 이미지 삭제
-                        fileRepository.delete(oriFile);
-                    }
                 }
             }
         }
