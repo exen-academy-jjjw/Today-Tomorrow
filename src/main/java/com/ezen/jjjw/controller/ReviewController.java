@@ -50,7 +50,7 @@ public class ReviewController {
     public ResponseEntity<?> updateReview(@PathVariable Long postId,
                                           @ModelAttribute ReviewRequestDto reviewRequestDto,
                                           @RequestPart(value = "fileUrl", required = false) List<MultipartFile> multipartFiles
-                                          ) {
+                                          ) throws IOException {
        return reviewService.updateSave(postId, reviewRequestDto, multipartFiles);
     }
 
