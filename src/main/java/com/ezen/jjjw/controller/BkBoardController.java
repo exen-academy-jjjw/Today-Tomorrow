@@ -49,6 +49,12 @@ public class BkBoardController {
         return bkBoardService.getAllBkBoardDto(page, member);
     }
 
+    @GetMapping("/share")
+    public ResponseEntity<List<BkBoard>> getAllShareBkBoardDto(@RequestParam("page") int page){
+        tokenProvider.getMemberFromAuthentication();
+        return bkBoardService.getAllShareBkBoardDto(page);
+    }
+
     @GetMapping("/list/{category}")
     public ResponseEntity<List<BkBoard>> findAllByMemberIdAndCategory(@PathVariable String category, @RequestParam("page") int page){
         Member member = tokenProvider.getMemberFromAuthentication();
@@ -58,5 +64,11 @@ public class BkBoardController {
     @PutMapping("/completion/{postId}")
     public ResponseEntity<Integer> updateCompletion(@PathVariable("postId") Long postId, @RequestBody BkBoardDto.RequestCompletion requestCompletion) {
         return bkBoardService.updateCompletion(postId, requestCompletion);
+    }
+
+    @PutMapping("/share/{postId}")
+    public ResponseEntity<Integer> updateShare(@PathVariable("postId") Long postId, @RequestBody BkBoardDto.RequestShare requestShare) {
+        Member member = tokenProvider.getMemberFromAuthentication();
+        return bkBoardService.updateShare(postId, requestShare, member);
     }
 }

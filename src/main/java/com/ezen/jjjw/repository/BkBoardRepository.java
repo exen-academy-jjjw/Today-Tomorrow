@@ -14,6 +14,8 @@ import java.util.List;
 public interface BkBoardRepository extends JpaRepository<BkBoard, Long> {
 
         Page<BkBoard> findAllByMemberId(Long memberId, Pageable pageable);
+        Page<BkBoard> findAllByShare(int share, Pageable pageable);
+
         Page<BkBoard> findAllByMemberIdAndCategory(Long memberId, String category, Pageable pageable);
         Integer countByMemberId(Long memberId);
         Integer countByMemberIdAndCompletion(Long memberId, int completionValue);

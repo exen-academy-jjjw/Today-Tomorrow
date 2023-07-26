@@ -42,6 +42,10 @@ public class BkBoard extends Timestamped {
 
         @ColumnDefault("0")
         @Builder.Default
+        private int share = 0;
+
+        @ColumnDefault("0")
+        @Builder.Default
         private int existReview = 0;
 
         @JsonIgnore
@@ -60,10 +64,15 @@ public class BkBoard extends Timestamped {
                 this.content = bkBoardRequestDto.getContent();
                 this.category = bkBoardRequestDto.getCategory();
                 this.completion = bkBoardRequestDto.getCompletion();
+                this.share = bkBoardRequestDto.getShare();
         }
 
         public void updateCompletion(BkBoardDto.RequestCompletion requestCompletion){
                 this.completion = requestCompletion.getCompletion();
+        }
+
+        public void updateShare(BkBoardDto.RequestShare requestShare){
+                this.share = requestShare.getShare();
         }
 
         public void updateExistReview(BkBoard bkBoard){

@@ -49,4 +49,9 @@ public class CustomExceptionHandler {
         }
         return null;
     }
+
+    public ResponseEntity<Integer> getNotMatchMemberStatus() {
+        log.info("일치하지 않는 사용자");
+        return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
+    }
 }
