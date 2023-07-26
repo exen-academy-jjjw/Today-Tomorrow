@@ -32,6 +32,7 @@ public class BkBoardDto {
         private String title;  // 제목
         private String content;  // 내용
         private Integer completion;
+        private int share;
 
         public BkBoard toEntity(Member member) {
             return BkBoard.builder()
@@ -41,6 +42,7 @@ public class BkBoardDto {
                     .title(title)
                     .content(content)
                     .completion(completion)
+                    .share(share)
                     .build();
         }
     }
@@ -50,7 +52,13 @@ public class BkBoardDto {
     public static class RequestCompletion {
         private Long postId;
         private Integer completion;
+    }
 
+    @Getter
+    @NoArgsConstructor
+    public static class RequestShare {
+        private Long postId;
+        private int share;
     }
 
     @Getter
@@ -62,6 +70,7 @@ public class BkBoardDto {
         private String title;  // 제목
         private String content;  // 내용
         private int completion;
+        private int share;
 
         public BkBoard toEntity(Member member) {
             return BkBoard.builder()
@@ -71,6 +80,7 @@ public class BkBoardDto {
                     .title(title)
                     .content(content)
                     .completion(completion)
+                    .share(share)
                     .build();
         }
     }
