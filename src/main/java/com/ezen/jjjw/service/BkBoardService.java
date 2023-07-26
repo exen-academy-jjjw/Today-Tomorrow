@@ -75,6 +75,14 @@ public class BkBoardService {
     }
 
     @Transactional
+    public ResponseEntity<List<BkBoard>> getAllShareBkBoardDto(int page) {
+        PageRequest pageRequest = PageRequest.of(page, 10, Sort.by("postId").descending());
+        Page<BkBoard> bkBoardPage = bkBoardRepository.findAllByShare(1, pageRequest);
+        List<BkBoard> bkBoardList = bkBoardPage.getContent();
+        return ResponseEntity.ok(bkBoardList);
+    }
+
+    @Transactional
     public ResponseEntity<List<BkBoard>> findAllByMemberIdAndCategory(String category, int page, Member member) {
         PageRequest pageRequest = PageRequest.of(page, 10, Sort.by("postId").descending());
         Page<BkBoard> bkBoardPage = bkBoardRepository.findAllByMemberIdAndCategory(member.getId(), category, pageRequest);
@@ -92,5 +100,22 @@ public class BkBoardService {
 
         log.info("완료 여부 변경 완료");
         return ResponseEntity.ok(bkBoard.getCompletion());
+    }
+
+    @Transactional
+    public ResponseEntity<Integer> updateShare(Long postId, BkBoardDto.RequestShare requestShare, Member member) {
+        BkBoard bkBoard = (bkBoardRepository.findById(postId)).get();
+        customExceptionHandler.getNotFoundBoardStatus(bkBoard);
+
+        Member author = bkBoard.getMember();
+        if(!author.getMemberId().equals(member.getMemberId())) {
+            return customExceptionHandler.getNotMatchMemberStatus();
+        }
+
+        bkBoard.updateShare(requestShare);
+        bkBoardRepository.save(bkBoard);
+
+        log.info("공유 여부 변경 완료");
+        return ResponseEntity.ok(bkBoard.getShare());
     }
 }
