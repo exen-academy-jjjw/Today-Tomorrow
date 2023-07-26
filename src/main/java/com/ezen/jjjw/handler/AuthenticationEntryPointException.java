@@ -26,8 +26,7 @@ import java.io.IOException;
  */
 @Component
 @RequiredArgsConstructor
-public class AuthenticationEntryPointException implements
-        AuthenticationEntryPoint {
+public class AuthenticationEntryPointException implements AuthenticationEntryPoint {
     private final TokenProvider tokenProvider;
 
     @Override
