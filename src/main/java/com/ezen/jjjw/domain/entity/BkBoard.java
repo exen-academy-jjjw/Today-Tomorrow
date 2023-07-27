@@ -9,6 +9,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Builder
@@ -51,6 +53,10 @@ public class BkBoard extends Timestamped {
         @JsonIgnore
         @OneToOne(mappedBy = "bkBoard", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
         private Review review;
+
+        @JsonIgnore
+        @OneToMany(mappedBy = "bkBoard", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
+        private List<Comment> CommentList = new ArrayList<>();
 
         public BkBoard(BkBoardDto bkBoardDto) {
                 this.postId = bkBoardDto.getPostId();
