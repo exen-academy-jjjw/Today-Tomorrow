@@ -56,7 +56,7 @@ public class BkBoard extends Timestamped {
 
         @JsonIgnore
         @OneToMany(mappedBy = "bkBoard", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
-        private List<Comment> CommentList = new ArrayList<>();
+        private List<Comment> children = new ArrayList<>();
 
         public BkBoard(BkBoardDto bkBoardDto) {
                 this.postId = bkBoardDto.getPostId();

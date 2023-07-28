@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * packageName    : com.ezen.jjjw.domain.entity
@@ -29,6 +31,9 @@ public class Comment extends Timestamped {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
+    private String commentTxt;
+
     @JsonIgnore
     @JoinColumn(name = "nickname", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
@@ -39,8 +44,16 @@ public class Comment extends Timestamped {
     @ManyToOne(fetch = FetchType.LAZY)
     private BkBoard bkBoard;
 
-    @Column(nullable = false)
-    private String CommentTxt;
+    @JoinColumn(name = "parentId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Comment parent;
 
+    @Builder.Default
+    @OneToMany(mappedBy = "parent", orphanRemoval = true)
+    private List<Comment> children = new ArrayList<>();
+
+    public void update(){
+
+    }
 
 }
