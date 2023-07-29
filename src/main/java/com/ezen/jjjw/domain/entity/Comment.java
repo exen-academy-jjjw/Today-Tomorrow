@@ -1,5 +1,6 @@
 package com.ezen.jjjw.domain.entity;
 
+import com.ezen.jjjw.dto.request.CommentReqDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,7 +36,7 @@ public class Comment extends Timestamped {
     private String commentTxt;
 
     @JsonIgnore
-    @JoinColumn(name = "nickname", nullable = false)
+    @JoinColumn(name = "memberId", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
@@ -44,6 +45,7 @@ public class Comment extends Timestamped {
     @ManyToOne(fetch = FetchType.LAZY)
     private BkBoard bkBoard;
 
+    @JsonIgnore
     @JoinColumn(name = "parentId")
     @ManyToOne(fetch = FetchType.LAZY)
     private Comment parent;
@@ -52,8 +54,15 @@ public class Comment extends Timestamped {
     @OneToMany(mappedBy = "parent", orphanRemoval = true)
     private List<Comment> children = new ArrayList<>();
 
-    public void update(){
-
+    public void update(CommentReqDto commentReqDto){
+        this.commentTxt = commentReqDto.getCommentTxt();
     }
 
+    public void updateParent(Comment parent){
+        this.parent = parent;
+    }
+
+    public boolean validateMember(Member member){
+        return !this.member.equals(member);
+    }
 }

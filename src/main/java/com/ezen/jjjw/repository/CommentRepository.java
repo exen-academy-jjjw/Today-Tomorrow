@@ -4,6 +4,8 @@ import com.ezen.jjjw.domain.entity.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * packageName    : com.ezen.jjjw.repository
  * fileName       : CommentRepository.java
@@ -18,5 +20,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-
+    List<Comment> findAllByBkBoard(Long postId);
 }

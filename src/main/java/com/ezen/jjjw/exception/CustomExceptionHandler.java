@@ -1,6 +1,7 @@
 package com.ezen.jjjw.exception;
 
 import com.ezen.jjjw.domain.entity.BkBoard;
+import com.ezen.jjjw.domain.entity.Comment;
 import com.ezen.jjjw.domain.entity.Member;
 import com.ezen.jjjw.domain.entity.Review;
 import lombok.extern.slf4j.Slf4j;
@@ -45,6 +46,16 @@ public class CustomExceptionHandler {
         Review findReview = bkBoard.getReview();
         if (existReview == 0 || findReview == null) {
             log.info("존재하지 않는 리뷰");
+            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
+        }
+        return null;
+    }
+
+    public ResponseEntity<?> getNotFoundCommentStatusOrgetComment(BkBoard bkBoard) {
+        int existComment = bkBoard.getExistComment();
+        Comment findComment = (Comment) bkBoard.getComments();
+        if (existComment == 0 || findComment == null) {
+            log.info("존재하지 않는 댓글");
             return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
         }
         return null;

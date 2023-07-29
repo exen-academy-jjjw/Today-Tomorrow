@@ -27,10 +27,11 @@ import java.util.List;
 @AllArgsConstructor
 public class CommentResDto {
     private Long id;
-    private String CommentTxt;
+    private String commentTxt;
     private String nickname;
     private Long postId;
-    private List<Comment> children;
+    private Long parent;
+    private List<CommentResDto> children;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 }

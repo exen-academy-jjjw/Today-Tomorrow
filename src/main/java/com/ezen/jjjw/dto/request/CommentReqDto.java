@@ -24,6 +24,7 @@ import java.util.List;
 @NoArgsConstructor
 public class CommentReqDto {
     private String CommentTxt;
-    private String nickname;
+    private Long memberId;
     private Long postId;
+    private Long parentId;
 }

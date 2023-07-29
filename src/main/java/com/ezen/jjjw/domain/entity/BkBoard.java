@@ -50,13 +50,17 @@ public class BkBoard extends Timestamped {
         @Builder.Default
         private int existReview = 0;
 
+        @ColumnDefault("0")
+        @Builder.Default
+        private int existComment = 0;
+
         @JsonIgnore
         @OneToOne(mappedBy = "bkBoard", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
         private Review review;
 
         @JsonIgnore
         @OneToMany(mappedBy = "bkBoard", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
-        private List<Comment> children = new ArrayList<>();
+        private List<Comment> comments = new ArrayList<>();
 
         public BkBoard(BkBoardDto bkBoardDto) {
                 this.postId = bkBoardDto.getPostId();
@@ -88,4 +92,11 @@ public class BkBoard extends Timestamped {
         public void deleteExistReview(BkBoard bkBoard){
                 this.existReview = 0;
         }
+
+//        public void updateExistComment(BkBoard bkBoard){
+//                this.existComment = 1;
+//        }
+//        public void deleteExistComment(BkBoard bkBoard){
+//                this.existComment = 0;
+//        }
 }
