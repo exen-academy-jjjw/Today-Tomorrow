@@ -30,7 +30,8 @@ public class BkBoardController {
 
     @PutMapping("/update/{postId}")
     public ResponseEntity<Integer> update(@PathVariable("postId") Long postId, @RequestBody BkBoardDto.UpdateRequest bkrequest) {
-        return bkBoardService.update(postId, bkrequest);
+        Member member = tokenProvider.getMemberFromAuthentication();
+        return bkBoardService.update(postId, bkrequest, member);
     }
 
     @DeleteMapping("/delete/{postId}")
@@ -63,7 +64,8 @@ public class BkBoardController {
 
     @PutMapping("/completion/{postId}")
     public ResponseEntity<Integer> updateCompletion(@PathVariable("postId") Long postId, @RequestBody BkBoardDto.RequestCompletion requestCompletion) {
-        return bkBoardService.updateCompletion(postId, requestCompletion);
+        Member member = tokenProvider.getMemberFromAuthentication();
+        return bkBoardService.updateCompletion(postId, requestCompletion, member);
     }
 
     @PutMapping("/share/{postId}")

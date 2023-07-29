@@ -37,9 +37,14 @@ public class BkBoardService {
     }
 
     @Transactional
-    public ResponseEntity<Integer> update(Long postId, BkBoardDto.UpdateRequest bkrequest) {
+    public ResponseEntity<Integer> update(Long postId, BkBoardDto.UpdateRequest bkrequest, Member member) {
         BkBoard bkBoard = (bkBoardRepository.findById(postId)).get();
         customExceptionHandler.getNotFoundBoardStatus(bkBoard);
+
+        Member author = bkBoard.getMember();
+        if(!author.getMemberId().equals(member.getMemberId())) {
+            return customExceptionHandler.getNotMatchMemberStatus();
+        }
 
         bkBoard.update(bkrequest);
         bkBoardRepository.save(bkBoard);
@@ -91,9 +96,14 @@ public class BkBoardService {
     }
 
     @Transactional
-    public ResponseEntity<Integer> updateCompletion(Long postId, BkBoardDto.RequestCompletion requestCompletion) {
+    public ResponseEntity<Integer> updateCompletion(Long postId, BkBoardDto.RequestCompletion requestCompletion, Member member) {
         BkBoard bkBoard = (bkBoardRepository.findById(postId)).get();
         customExceptionHandler.getNotFoundBoardStatus(bkBoard);
+
+        Member author = bkBoard.getMember();
+        if(!author.getMemberId().equals(member.getMemberId())) {
+            return customExceptionHandler.getNotMatchMemberStatus();
+        }
 
         bkBoard.updateCompletion(requestCompletion);
         bkBoardRepository.save(bkBoard);
