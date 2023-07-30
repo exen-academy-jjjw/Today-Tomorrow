@@ -31,7 +31,6 @@ public class CommentResDto {
     private String nickname;
     private Long postId;
     private Long parent;
-    private List<CommentResDto> children;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
 }

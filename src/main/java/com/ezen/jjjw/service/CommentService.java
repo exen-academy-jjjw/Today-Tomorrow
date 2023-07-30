@@ -105,11 +105,15 @@ public class CommentService {
         List<CommentResDto> commentResDtoList = new ArrayList<>();
 
         for(Comment comment: findComments){
+            Long parentId = comment.getParent() != null ? comment.getParent().getId() : 0;
+
             commentResDtoList.add(
                     CommentResDto.builder()
                             .id(comment.getId())
                             .commentTxt(comment.getCommentTxt())
                             .nickname(comment.getMember().getNickname())
+                            .postId(comment.getBkBoard().getPostId())
+                            .parent(parentId)
                             .createdAt(comment.getCreatedAt())
                             .modifiedAt(comment.getModifiedAt())
                             .build()
