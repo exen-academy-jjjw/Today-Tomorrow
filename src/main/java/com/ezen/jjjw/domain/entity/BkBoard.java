@@ -93,10 +93,10 @@ public class BkBoard extends Timestamped {
                 this.existReview = 0;
         }
 
-//        public void updateExistComment(BkBoard bkBoard){
-//                this.existComment = 1;
-//        }
-//        public void deleteExistComment(BkBoard bkBoard){
-//                this.existComment = 0;
-//        }
+        public void updateExistComment(BkBoard bkBoard){
+                this.existComment = 1;
+        }
+        public void deleteExistComment(BkBoard bkBoard){
+                this.existComment = 0;
+        }
 }

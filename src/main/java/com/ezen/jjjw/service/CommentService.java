@@ -1,5 +1,6 @@
 package com.ezen.jjjw.service;
 
+import com.amazonaws.services.kms.model.NotFoundException;
 import com.ezen.jjjw.domain.entity.BkBoard;
 import com.ezen.jjjw.domain.entity.Comment;
 import com.ezen.jjjw.domain.entity.Member;
@@ -46,53 +47,38 @@ public class CommentService {
         BkBoard bkBoard = isPresentPost(postId);
         customExceptionHandler.getNotFoundBoardStatus(bkBoard);
 
-        Comment parent = null;
-        // 자식댓글인 경우
-        if (commentReqDto.getParentId() != null) {
-            parent = (Comment) member.getComments();
-            if (parent == null) {
-                log.info("댓글이 존재하지 않습니다.");
-                return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
-            }
-            // 부모댓글의 게시글 번호와 자식댓글의 게시글 번호 같은지 체크하기
-            if (!parent.getBkBoard().getPostId().equals(commentReqDto.getPostId())) {
-                log.info("댓글의 게시글 번호가 일치하지 않습니다.");
-                return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
-            }
-        }
-
         Comment comment = Comment.builder()
                 .commentTxt(commentReqDto.getCommentTxt())
                 .member(member)
                 .bkBoard(bkBoard)
                 .build();
-
-        if(null != parent){
-            comment.updateParent(parent);
-        }
+        bkBoard.updateExistComment(bkBoard);
+        bkBoardRepository.save(bkBoard);
         commentRepository.save(comment);
 
-        CommentResDto commentResDto = null;
-        if(parent != null){
-            commentResDto = CommentResDto.builder()
-                    .id(comment.getId())
-                    .commentTxt(comment.getCommentTxt())
-                    .nickname(comment.getMember().getNickname())
-                    .parent(comment.getParent().getId())
-                    .createdAt(comment.getCreatedAt())
-                    .modifiedAt(comment.getModifiedAt())
-                    .build();
-        } else {
-            commentResDto = CommentResDto.builder()
-                    .id(comment.getId())
-                    .commentTxt(comment.getCommentTxt())
-                    .nickname(comment.getMember().getNickname())
-                    .createdAt(comment.getCreatedAt())
-                    .modifiedAt(comment.getModifiedAt())
-                    .build();
+        log.info("댓글 작성 성공");
+        return ResponseEntity.ok(HttpServletResponse.SC_OK);
+    }
+
+    @Transactional
+    public ResponseEntity<Integer> createReply(Long commentId, CommentReqDto commentReqDto, Member member) {
+        Comment parent = isPresentParent(commentId);
+        customExceptionHandler.getNotFoundCommentStatusOrgetComment(parent.getBkBoard());
+
+        if (parent.getParent() != null) {
+            log.info("댓글을 작성할 수 없습니다.");
+            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
         }
 
-        log.info("댓글 작성 성공");
+        Comment reply = Comment.builder()
+                .commentTxt(commentReqDto.getCommentTxt())
+                .member(member)
+                .bkBoard(parent.getBkBoard())
+                .parent(parent)
+                .build();
+        commentRepository.save(reply);
+
+        log.info("대댓글 작성 성공");
         return ResponseEntity.ok(HttpServletResponse.SC_OK);
     }
 
@@ -103,13 +89,19 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
+    public Comment isPresentParent(Long commentId) {
+        Optional<Comment> parent = commentRepository.findById(commentId);
+        return parent.orElse(null);
+    }
+
+    @Transactional(readOnly = true)
     public ResponseEntity<?> detailComment(Long postId) {
         BkBoard bkBoard = isPresentPost(postId);
         customExceptionHandler.getNotFoundBoardStatus(bkBoard);
 
         customExceptionHandler.getNotFoundCommentStatusOrgetComment(bkBoard);
 
-        List<Comment> findComments = commentRepository.findAllByBkBoard(postId);
+        List<Comment> findComments = commentRepository.findAllByBkBoardPostId(postId);
         List<CommentResDto> commentResDtoList = new ArrayList<>();
 
         for(Comment comment: findComments){
@@ -127,12 +119,9 @@ public class CommentService {
     }
 
     @Transactional
-    public ResponseEntity<?> updateComment(Long postId, CommentReqDto commentReqDto) {
-        BkBoard bkBoard = isPresentPost(postId);
-        customExceptionHandler.getNotFoundBoardStatus(bkBoard);
-
-        customExceptionHandler.getNotFoundCommentStatusOrgetComment(bkBoard);
-        Comment findComment = (Comment) bkBoard.getComments();
+    public ResponseEntity<?> updateComment(Long commentId, CommentReqDto commentReqDto) {
+        Comment findComment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new NotFoundException("댓글을 찾을 수 없습니다."));
 
         findComment.update(commentReqDto);
         commentRepository.save(findComment);
@@ -142,12 +131,9 @@ public class CommentService {
     }
 
     @Transactional
-    public ResponseEntity<Integer> deleteComment(Long postId) {
-        BkBoard bkBoard = isPresentPost(postId);
-        customExceptionHandler.getNotFoundBoardStatus(bkBoard);
-
-        customExceptionHandler.getNotFoundCommentStatusOrgetComment(bkBoard);
-        Comment findComment = (Comment) bkBoard.getComments();
+    public ResponseEntity<Integer> deleteComment(Long commentId) {
+        Comment findComment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new NotFoundException("댓글을 찾을 수 없습니다."));
 
         commentRepository.delete(findComment);
 

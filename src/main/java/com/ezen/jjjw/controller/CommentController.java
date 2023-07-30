@@ -39,19 +39,25 @@ public class CommentController {
         return commentService.createComment(postId, commentReqDto, member);
     }
 
+    @PostMapping(value = "/reply/{commentId}")
+    public ResponseEntity<Integer> createReply(@PathVariable Long commentId, @RequestBody CommentReqDto commentReqDto){
+        Member member = tokenProvider.getMemberFromAuthentication();
+        return commentService.createReply(commentId, commentReqDto, member);
+    }
+
     @GetMapping(value = "/detail/{postId}")
     public ResponseEntity<?> detailComment(@PathVariable Long postId){
         return commentService.detailComment(postId);
     }
 
-    @PutMapping(value = "/update/{postId}")
-    public ResponseEntity<?> updateComment(@PathVariable Long postId, @RequestBody CommentReqDto commentReqDto){
-        return commentService.updateComment(postId, commentReqDto);
+    @PutMapping(value = "/update/{commentId}")
+    public ResponseEntity<?> updateComment(@PathVariable Long commentId, @RequestBody CommentReqDto commentReqDto){
+        return commentService.updateComment(commentId, commentReqDto);
     }
 
-    @DeleteMapping(value = "/delete/{postId}")
-    public ResponseEntity<Integer> deleteComment(@PathVariable Long postId){
-        return commentService.deleteComment(postId);
+    @DeleteMapping(value = "/delete/{commentId}")
+    public ResponseEntity<Integer> deleteComment(@PathVariable Long commentId){
+        return commentService.deleteComment(commentId);
     }
 
 }

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
  * packageName    : com.ezen.jjjw.exception
@@ -53,7 +54,7 @@ public class CustomExceptionHandler {
 
     public ResponseEntity<?> getNotFoundCommentStatusOrgetComment(BkBoard bkBoard) {
         int existComment = bkBoard.getExistComment();
-        Comment findComment = (Comment) bkBoard.getComments();
+        List<Comment> findComment = bkBoard.getComments();
         if (existComment == 0 || findComment == null) {
             log.info("존재하지 않는 댓글");
             return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
