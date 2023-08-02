@@ -9,7 +9,6 @@ import com.ezen.jjjw.dto.response.CommentResDto;
 import com.ezen.jjjw.exception.CustomExceptionHandler;
 import com.ezen.jjjw.repository.BkBoardRepository;
 import com.ezen.jjjw.repository.CommentRepository;
-import com.ezen.jjjw.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -139,6 +138,11 @@ public class CommentService {
         Comment findComment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new NotFoundException("댓글을 찾을 수 없습니다."));
 
+        BkBoard bkBoard = findComment.getBkBoard();
+        if(findComment.getParent() == null){
+            bkBoard.deleteExistComment(bkBoard);
+            bkBoardRepository.save(bkBoard);
+        }
         commentRepository.delete(findComment);
 
         log.info("댓글 삭제 성공");

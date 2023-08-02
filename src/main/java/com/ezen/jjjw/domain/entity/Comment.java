@@ -57,12 +57,4 @@ public class Comment extends Timestamped {
     public void update(CommentReqDto commentReqDto){
         this.commentTxt = commentReqDto.getCommentTxt();
     }
-
-    public void updateParent(Comment parent){
-        this.parent = parent;
-    }
-
-    public boolean validateMember(Member member){
-        return !this.member.equals(member);
-    }
 }

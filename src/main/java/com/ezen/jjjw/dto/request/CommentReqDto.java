@@ -1,11 +1,8 @@
 package com.ezen.jjjw.dto.request;
 
-import com.ezen.jjjw.domain.entity.Comment;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 /**
  * packageName    : com.ezen.jjjw.dto.request

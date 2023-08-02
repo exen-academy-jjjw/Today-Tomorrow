@@ -1,17 +1,13 @@
 package com.ezen.jjjw.controller;
 
-import com.ezen.jjjw.domain.entity.Comment;
 import com.ezen.jjjw.domain.entity.Member;
 import com.ezen.jjjw.dto.request.CommentReqDto;
 import com.ezen.jjjw.jwt.TokenProvider;
 import com.ezen.jjjw.service.CommentService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import javax.swing.*;
-import java.util.List;
 
 /**
  * packageName    : com.ezen.jjjw.controller

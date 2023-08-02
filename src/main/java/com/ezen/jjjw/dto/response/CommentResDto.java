@@ -1,13 +1,11 @@
 package com.ezen.jjjw.dto.response;
 
-import com.ezen.jjjw.domain.entity.Comment;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 /**
  * packageName    : com.ezen.jjjw.dto.response

@@ -1,6 +1,5 @@
 package com.ezen.jjjw.repository;
 
-import com.ezen.jjjw.domain.entity.BkBoard;
 import com.ezen.jjjw.domain.entity.Comment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
