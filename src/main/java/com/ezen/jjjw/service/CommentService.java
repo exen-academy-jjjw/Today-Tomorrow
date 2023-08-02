@@ -97,29 +97,41 @@ public class CommentService {
     public ResponseEntity<?> detailComment(Long postId) {
         BkBoard bkBoard = isPresentPost(postId);
         customExceptionHandler.getNotFoundBoardStatus(bkBoard);
-
         customExceptionHandler.getNotFoundCommentStatusOrgetComment(bkBoard);
 
         List<Comment> findComments = commentRepository.findAllByBkBoardPostId(postId);
         List<CommentResDto> commentResDtoList = new ArrayList<>();
 
         for(Comment comment: findComments){
-            Long parentId = comment.getParent() != null ? comment.getParent().getId() : 0;
-
-            commentResDtoList.add(
-                    CommentResDto.builder()
-                            .id(comment.getId())
-                            .commentTxt(comment.getCommentTxt())
-                            .nickname(comment.getMember().getNickname())
-                            .postId(comment.getBkBoard().getPostId())
-                            .parent(parentId)
-                            .createdAt(comment.getCreatedAt())
-                            .modifiedAt(comment.getModifiedAt())
-                            .build()
-            );
+            if (comment.getParent() == null) {
+                CommentResDto commentDto = buildCommentTree(comment, findComments);
+                commentResDtoList.add(commentDto);
+            }
         }
         return ResponseEntity.ok(commentResDtoList);
     }
+
+    public CommentResDto buildCommentTree(Comment comment, List<Comment> comments) {
+        CommentResDto commentDto = CommentResDto.builder()
+                .id(comment.getId())
+                .commentTxt(comment.getCommentTxt())
+                .nickname(comment.getMember().getNickname())
+                .postId(comment.getBkBoard().getPostId())
+                .createdAt(comment.getCreatedAt())
+                .modifiedAt(comment.getModifiedAt())
+                .build();
+
+        List<CommentResDto> children = new ArrayList<>();
+        for (Comment child : comments) {
+            if (child.getParent() != null && child.getParent().getId().equals(comment.getId())) {
+                CommentResDto childDto = buildCommentTree(child, comments);
+                children.add(childDto);
+            }
+        }
+        commentDto.setChildren(children);
+        return commentDto;
+    }
+
 
     @Transactional
     public ResponseEntity<?> updateComment(Long commentId, CommentReqDto commentReqDto) {

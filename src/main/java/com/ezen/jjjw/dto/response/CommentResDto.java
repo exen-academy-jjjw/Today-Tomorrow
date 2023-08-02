@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * packageName    : com.ezen.jjjw.dto.response
@@ -29,6 +30,11 @@ public class CommentResDto {
     private String nickname;
     private Long postId;
     private Long parent;
+    private List<CommentResDto> children;
     private LocalDateTime createdAt;
     private LocalDateTime modifiedAt;
+
+    public void setChildren(List<CommentResDto> children) {
+        this.children = children;
+    }
 }
