@@ -111,6 +111,7 @@ public class CommentService {
         return ResponseEntity.ok(commentResDtoList);
     }
 
+    @Transactional(readOnly = true)
     public CommentResDto buildCommentTree(Comment comment, List<Comment> comments) {
         CommentResDto commentDto = CommentResDto.builder()
                 .id(comment.getId())
