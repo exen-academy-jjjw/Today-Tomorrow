@@ -20,8 +20,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CommentReqDto {
-    private String CommentTxt;
+    private String commentTxt;
     private Long memberId;
     private Long postId;
     private Long parentId;
+    public CommentReqDto(String commentTxt) {
+        this.commentTxt = commentTxt;
+    }
 }
