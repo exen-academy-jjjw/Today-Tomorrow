@@ -3,26 +3,28 @@ package com.ezen.jjjw.dto.request;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.util.List;
 
 /**
- * packageName    : com.RSMboard.RSMboard.dto
- * fileName       : ReviewDTO.java
+ * packageName    : com.ezen.jjjw.dto.request
+ * fileName       : CommentReqDto.java
  * author         : won
- * date           : 2023-06-04
+ * date           : 2023-07-28
  * description    :
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
- * 2023-06-04        won       최초 생성
+ * 2023-07-28        won       최초 생성
  */
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReviewRequestDto {
-
-    private String reviewContent;
-
-    private List<String> fileUrlList;
+public class CommentReqDto {
+    private String commentTxt;
+    private Long memberId;
+    private Long postId;
+    private Long parentId;
+    public CommentReqDto(String commentTxt) {
+        this.commentTxt = commentTxt;
+    }
 }
