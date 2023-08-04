@@ -34,9 +34,21 @@ public class BkBoardController {
         return bkBoardService.update(postId, bkrequest, member);
     }
 
+    @GetMapping("/update/{postId}")
+    public ResponseEntity<Integer> updateGetMember(@PathVariable("postId") Long postId) {
+        Member member = tokenProvider.getMemberFromAuthentication();
+        return bkBoardService.updateGetMember(postId, member);
+    }
+
     @DeleteMapping("/delete/{postId}")
     public ResponseEntity<Integer> delete(@PathVariable("postId") Long postId) {
         return bkBoardService.delete(postId);
+    }
+
+    @GetMapping("/delete/{postId}")
+    public ResponseEntity<Integer> deleteGetMember(@PathVariable("postId") Long postId) {
+        Member member = tokenProvider.getMemberFromAuthentication();
+        return bkBoardService.deleteGetMember(postId, member);
     }
 
     @GetMapping("/detail/{postId}")
