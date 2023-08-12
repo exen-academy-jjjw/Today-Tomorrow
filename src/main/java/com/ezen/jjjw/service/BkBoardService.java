@@ -5,6 +5,7 @@ package com.ezen.jjjw.service;
 import com.ezen.jjjw.domain.entity.BkBoard;
 import com.ezen.jjjw.domain.entity.Member;
 import com.ezen.jjjw.dto.BkBoardDto;
+import com.ezen.jjjw.dto.response.BkBoardResDto;
 import com.ezen.jjjw.exception.CustomExceptionHandler;
 import com.ezen.jjjw.repository.BkBoardRepository;
 import lombok.RequiredArgsConstructor;
@@ -94,7 +95,19 @@ public class BkBoardService {
         BkBoard bkBoard = (bkBoardRepository.findById(postId)).get();
         customExceptionHandler.getNotFoundBoardStatus(bkBoard);
 
-        return ResponseEntity.ok(bkBoard);
+        BkBoardResDto bkBoardResDto = BkBoardResDto.builder()
+                .postId(bkBoard.getPostId())
+                .nickname(bkBoard.getMember().getNickname())
+                .category(bkBoard.getCategory())
+                .title(bkBoard.getTitle())
+                .content(bkBoard.getContent())
+                .completion(bkBoard.getCompletion())
+                .share(bkBoard.getShare())
+                .existReview(bkBoard.getExistReview())
+                .existComment(bkBoard.getExistComment())
+                .build();
+
+        return ResponseEntity.ok(bkBoardResDto);
     }
 
     @Transactional
