@@ -37,13 +37,31 @@ public class BkBoardService {
     }
 
     @Transactional
-    public ResponseEntity<Integer> update(Long postId, BkBoardDto.UpdateRequest bkrequest) {
+    public ResponseEntity<Integer> update(Long postId, BkBoardDto.UpdateRequest bkrequest, Member member) {
         BkBoard bkBoard = (bkBoardRepository.findById(postId)).get();
         customExceptionHandler.getNotFoundBoardStatus(bkBoard);
+
+        Member author = bkBoard.getMember();
+        if(!author.getMemberId().equals(member.getMemberId())) {
+            return customExceptionHandler.getNotMatchMemberStatus();
+        }
 
         bkBoard.update(bkrequest);
         bkBoardRepository.save(bkBoard);
         log.info("게시글 업데이트 성공");
+        return ResponseEntity.ok(HttpServletResponse.SC_OK);
+    }
+
+    @Transactional
+    public ResponseEntity<Integer> updateGetMember(Long postId, Member member) {
+        BkBoard bkBoard = (bkBoardRepository.findById(postId)).get();
+        customExceptionHandler.getNotFoundBoardStatus(bkBoard);
+
+        Member author = bkBoard.getMember();
+        if(!author.getMemberId().equals(member.getMemberId())) {
+            return customExceptionHandler.getNotMatchMemberStatus();
+        }
+
         return ResponseEntity.ok(HttpServletResponse.SC_OK);
     }
 
@@ -55,6 +73,19 @@ public class BkBoardService {
         bkBoardRepository.deleteById(postId);
 
         log.info("게시글 삭제 성공");
+        return ResponseEntity.ok(HttpServletResponse.SC_OK);
+    }
+
+    @Transactional
+    public ResponseEntity<Integer> deleteGetMember(Long postId, Member member) {
+        BkBoard bkBoard = (bkBoardRepository.findById(postId)).get();
+        customExceptionHandler.getNotFoundBoardStatus(bkBoard);
+
+        Member author = bkBoard.getMember();
+        if(!author.getMemberId().equals(member.getMemberId())) {
+            return customExceptionHandler.getNotMatchMemberStatus();
+        }
+
         return ResponseEntity.ok(HttpServletResponse.SC_OK);
     }
 
@@ -91,9 +122,14 @@ public class BkBoardService {
     }
 
     @Transactional
-    public ResponseEntity<Integer> updateCompletion(Long postId, BkBoardDto.RequestCompletion requestCompletion) {
+    public ResponseEntity<Integer> updateCompletion(Long postId, BkBoardDto.RequestCompletion requestCompletion, Member member) {
         BkBoard bkBoard = (bkBoardRepository.findById(postId)).get();
         customExceptionHandler.getNotFoundBoardStatus(bkBoard);
+
+        Member author = bkBoard.getMember();
+        if(!author.getMemberId().equals(member.getMemberId())) {
+            return customExceptionHandler.getNotMatchMemberStatus();
+        }
 
         bkBoard.updateCompletion(requestCompletion);
         bkBoardRepository.save(bkBoard);
