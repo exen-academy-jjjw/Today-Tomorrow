@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -46,6 +47,16 @@ public class MypageService {
     @Transactional
     public ResponseEntity<Integer> updateNick(MypageRequestDto request, Member member) {
         customExceptionHandler.getNotFoundMemberStatus(member);
+
+        try {
+            Optional<Member> byNickname = memberRepository.findByNickname(request.getNickname());
+            if(byNickname.isPresent()) {
+                log.info("닉네임 중복");
+                return customExceptionHandler.getMatchMemberNickname();
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
 
         member.updateNickname(request);
         memberRepository.save(member);
