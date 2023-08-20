@@ -112,6 +112,17 @@ public class CommentService {
     }
 
     @Transactional(readOnly = true)
+    public ResponseEntity<Long> getCommentCount(Long postId) {
+        BkBoard bkBoard = isPresentPost(postId);
+        customExceptionHandler.getNotFoundBoardStatus(bkBoard);
+        customExceptionHandler.getNotFoundCommentStatusOrgetComment(bkBoard);
+
+        Long commentCount = commentRepository.countAllByBkBoardPostId(postId);
+
+        return ResponseEntity.ok(commentCount);
+    }
+
+    @Transactional(readOnly = true)
     public CommentResDto buildCommentTree(Comment comment, List<Comment> comments) {
         CommentResDto commentDto = CommentResDto.builder()
                 .id(comment.getId())

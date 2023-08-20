@@ -6,6 +6,7 @@ import com.ezen.jjjw.jwt.TokenProvider;
 import com.ezen.jjjw.service.CommentService;
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
  * 2023-07-28        won       최초 생성
  */
 
+@Slf4j
 @RequiredArgsConstructor
 @RestController
 @RequestMapping(value = "/comment")
@@ -44,6 +46,11 @@ public class CommentController {
     @GetMapping(value = "/detail/{postId}")
     public ResponseEntity<?> detailComment(@PathVariable Long postId){
         return commentService.detailComment(postId);
+    }
+
+    @GetMapping(value = "/count/{postId}")
+    public ResponseEntity<Long> getCommentCount(@PathVariable Long postId) {
+        return commentService.getCommentCount(postId);
     }
 
     @PutMapping(value = "/update/{commentId}")
