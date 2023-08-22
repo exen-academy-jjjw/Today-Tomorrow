@@ -66,4 +66,9 @@ public class CustomExceptionHandler {
         log.info("일치하지 않는 사용자");
         return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
     }
+
+    public ResponseEntity<Integer> getMatchMemberNickname() {
+        log.info("중복된 닉네임");
+        return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
+    }
 }

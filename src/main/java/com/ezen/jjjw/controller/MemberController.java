@@ -36,7 +36,7 @@ public class MemberController {
 
     // 회원가입
     @PostMapping(value = "/signup")
-    public ResponseEntity<Integer> signup(@RequestBody @Valid MemberSignupReqDto memberSignupReqDto) {
+    public ResponseEntity<?> signup(@RequestBody @Valid MemberSignupReqDto memberSignupReqDto) {
         return memberService.createMember(memberSignupReqDto);
     }
 
