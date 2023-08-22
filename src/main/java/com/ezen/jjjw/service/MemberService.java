@@ -6,6 +6,7 @@ import com.ezen.jjjw.dto.request.MemberDeleteReqDto;
 import com.ezen.jjjw.dto.request.MemberLoginReqDto;
 import com.ezen.jjjw.dto.request.MemberSignupReqDto;
 import com.ezen.jjjw.dto.response.TokenDto;
+import com.ezen.jjjw.exception.CustomExceptionHandler;
 import com.ezen.jjjw.jwt.TokenProvider;
 import com.ezen.jjjw.repository.MemberRepository;
 import com.ezen.jjjw.repository.OutMemberRepository;
@@ -52,11 +53,18 @@ public class MemberService {
 
     // 회원가입 로직
     @Transactional
-    public ResponseEntity<Integer> createMember(MemberSignupReqDto memberSignupReqDto) {
+    public ResponseEntity<?> createMember(MemberSignupReqDto memberSignupReqDto) {
         // 사용자로부터 입력받은 memberId로 DB에 같은 아이디가 있는지 확인
         if (null != isPresentMember(memberSignupReqDto.getMemberId())) {
             log.info("중복된 아이디");
             return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
+        }
+
+        // 사용자로부터 입력받은 nickname로 DB에 같은 닉네임이 있는지 확인
+        Optional<Member> byNickname = memberRepository.findByNickname(memberSignupReqDto.getNickname());
+        if(byNickname.isPresent()) {
+            log.info("닉네임 중복");
+            return ResponseEntity.ok("nickname " + HttpServletResponse.SC_BAD_REQUEST);
         }
 
         // 비밀번호와 비밀번호 확인의 값이 서로 일치하는지 확인
