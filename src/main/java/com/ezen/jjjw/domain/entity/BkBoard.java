@@ -1,6 +1,8 @@
 package com.ezen.jjjw.domain.entity;
 
-import com.ezen.jjjw.dto.BkBoardDto;
+import com.ezen.jjjw.dto.request.BkBoardUpdateReqDto;
+import com.ezen.jjjw.dto.request.CompletionReqDto;
+import com.ezen.jjjw.dto.request.ShareReqDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -62,14 +64,7 @@ public class BkBoard extends Timestamped {
         @OneToMany(mappedBy = "bkBoard", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
         private List<Comment> comments = new ArrayList<>();
 
-        public BkBoard(BkBoardDto bkBoardDto) {
-                this.postId = bkBoardDto.getPostId();
-                this.content = bkBoardDto.getContent();
-                this.title = bkBoardDto.getTitle();
-                this.category = bkBoardDto.getCategory();
-        }
-
-        public void update(BkBoardDto.UpdateRequest bkBoardRequestDto){
+        public void update(BkBoardUpdateReqDto bkBoardRequestDto){
                 this.title = bkBoardRequestDto.getTitle();
                 this.content = bkBoardRequestDto.getContent();
                 this.category = bkBoardRequestDto.getCategory();
@@ -77,11 +72,11 @@ public class BkBoard extends Timestamped {
                 this.share = bkBoardRequestDto.getShare();
         }
 
-        public void updateCompletion(BkBoardDto.RequestCompletion requestCompletion){
+        public void updateCompletion(CompletionReqDto requestCompletion){
                 this.completion = requestCompletion.getCompletion();
         }
 
-        public void updateShare(BkBoardDto.RequestShare requestShare){
+        public void updateShare(ShareReqDto requestShare){
                 this.share = requestShare.getShare();
         }
 

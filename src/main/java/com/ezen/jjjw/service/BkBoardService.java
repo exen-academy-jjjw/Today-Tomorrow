@@ -1,10 +1,11 @@
 package com.ezen.jjjw.service;
 
-
-
 import com.ezen.jjjw.domain.entity.BkBoard;
 import com.ezen.jjjw.domain.entity.Member;
-import com.ezen.jjjw.dto.BkBoardDto;
+import com.ezen.jjjw.dto.request.BkBoardReqDto;
+import com.ezen.jjjw.dto.request.BkBoardUpdateReqDto;
+import com.ezen.jjjw.dto.request.CompletionReqDto;
+import com.ezen.jjjw.dto.request.ShareReqDto;
 import com.ezen.jjjw.dto.response.BkBoardResDto;
 import com.ezen.jjjw.exception.CustomExceptionHandler;
 import com.ezen.jjjw.repository.BkBoardRepository;
@@ -30,15 +31,23 @@ public class BkBoardService {
     private final CustomExceptionHandler customExceptionHandler;
 
     @Transactional
-    public ResponseEntity<Long> create(BkBoardDto.Request bkrequest, Member member) {
-        BkBoard bkBoard = bkrequest.toEntity(member);
+    public ResponseEntity<Long> create(BkBoardReqDto bkrequest, Member member) {
+        BkBoard bkBoard = BkBoard.builder()
+                .member(member)
+                .postId(bkrequest.getPostId())
+                .category(bkrequest.getCategory())
+                .title(bkrequest.getTitle())
+                .content(bkrequest.getContent())
+                .completion(bkrequest.getCompletion())
+                .share(bkrequest.getShare())
+                .build();
         bkBoardRepository.save(bkBoard);
         log.info("게시글 작성 성공");
         return ResponseEntity.ok(bkBoard.getPostId());
     }
 
     @Transactional
-    public ResponseEntity<Integer> update(Long postId, BkBoardDto.UpdateRequest bkrequest, Member member) {
+    public ResponseEntity<Integer> update(Long postId, BkBoardUpdateReqDto bkrequest, Member member) {
         BkBoard bkBoard = (bkBoardRepository.findById(postId)).get();
         customExceptionHandler.getNotFoundBoardStatus(bkBoard);
 
@@ -135,7 +144,7 @@ public class BkBoardService {
     }
 
     @Transactional
-    public ResponseEntity<Integer> updateCompletion(Long postId, BkBoardDto.RequestCompletion requestCompletion, Member member) {
+    public ResponseEntity<Integer> updateCompletion(Long postId, CompletionReqDto requestCompletion, Member member) {
         BkBoard bkBoard = (bkBoardRepository.findById(postId)).get();
         customExceptionHandler.getNotFoundBoardStatus(bkBoard);
 
@@ -152,7 +161,7 @@ public class BkBoardService {
     }
 
     @Transactional
-    public ResponseEntity<Integer> updateShare(Long postId, BkBoardDto.RequestShare requestShare, Member member) {
+    public ResponseEntity<Integer> updateShare(Long postId, ShareReqDto requestShare, Member member) {
         BkBoard bkBoard = (bkBoardRepository.findById(postId)).get();
         customExceptionHandler.getNotFoundBoardStatus(bkBoard);
 
