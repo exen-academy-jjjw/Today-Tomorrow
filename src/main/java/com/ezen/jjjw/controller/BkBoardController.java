@@ -2,7 +2,10 @@ package com.ezen.jjjw.controller;
 
 import com.ezen.jjjw.domain.entity.BkBoard;
 import com.ezen.jjjw.domain.entity.Member;
-import com.ezen.jjjw.dto.BkBoardDto;
+import com.ezen.jjjw.dto.request.BkBoardReqDto;
+import com.ezen.jjjw.dto.request.BkBoardUpdateReqDto;
+import com.ezen.jjjw.dto.request.CompletionReqDto;
+import com.ezen.jjjw.dto.request.ShareReqDto;
 import com.ezen.jjjw.jwt.TokenProvider;
 import com.ezen.jjjw.service.BkBoardService;
 import lombok.RequiredArgsConstructor;
@@ -23,13 +26,13 @@ public class BkBoardController {
     private final TokenProvider tokenProvider;
 
     @PostMapping("/create")
-    public ResponseEntity<Long> create(@RequestBody BkBoardDto.Request bkrequest) {
+    public ResponseEntity<Long> create(@RequestBody BkBoardReqDto bkrequest) {
         Member member = tokenProvider.getMemberFromAuthentication();
         return bkBoardService.create(bkrequest, member);
     }
 
     @PutMapping("/update/{postId}")
-    public ResponseEntity<Integer> update(@PathVariable("postId") Long postId, @RequestBody BkBoardDto.UpdateRequest bkrequest) {
+    public ResponseEntity<Integer> update(@PathVariable("postId") Long postId, @RequestBody BkBoardUpdateReqDto bkrequest) {
         Member member = tokenProvider.getMemberFromAuthentication();
         return bkBoardService.update(postId, bkrequest, member);
     }
@@ -75,13 +78,13 @@ public class BkBoardController {
     }
 
     @PutMapping("/completion/{postId}")
-    public ResponseEntity<Integer> updateCompletion(@PathVariable("postId") Long postId, @RequestBody BkBoardDto.RequestCompletion requestCompletion) {
+    public ResponseEntity<Integer> updateCompletion(@PathVariable("postId") Long postId, @RequestBody CompletionReqDto requestCompletion) {
         Member member = tokenProvider.getMemberFromAuthentication();
         return bkBoardService.updateCompletion(postId, requestCompletion, member);
     }
 
     @PutMapping("/share/{postId}")
-    public ResponseEntity<Integer> updateShare(@PathVariable("postId") Long postId, @RequestBody BkBoardDto.RequestShare requestShare) {
+    public ResponseEntity<Integer> updateShare(@PathVariable("postId") Long postId, @RequestBody ShareReqDto requestShare) {
         Member member = tokenProvider.getMemberFromAuthentication();
         return bkBoardService.updateShare(postId, requestShare, member);
     }
