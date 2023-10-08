@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.Hibernate;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
@@ -52,6 +53,11 @@ public class Member extends Timestamped {
     @Column(nullable = false)
     @JsonIgnore
     private String password;
+
+    //신고 누적 수
+    @ColumnDefault("0")
+    @Builder.Default
+    private int report = 0;
 
     // 하나의 계정은 하나의 토큰을 가지고 있을 수 있으며 계정이 삭제될 경우 토큰도 함께 삭제된다
     @OneToOne(mappedBy = "member", cascade = CascadeType.REMOVE, orphanRemoval = true, fetch = FetchType.LAZY)
