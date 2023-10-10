@@ -1,10 +1,17 @@
 package com.ezen.jjjw.service;
 
 import com.ezen.jjjw.domain.entity.Member;
+import com.ezen.jjjw.domain.entity.OutMember;
+import com.ezen.jjjw.domain.entity.RefreshToken;
+import com.ezen.jjjw.dto.request.MemberDeleteReqDto;
 import com.ezen.jjjw.dto.request.MemberLoginReqDto;
 import com.ezen.jjjw.dto.request.MemberSignupReqDto;
+import com.ezen.jjjw.dto.response.ResponseDto;
+import com.ezen.jjjw.dto.response.TokenDto;
 import com.ezen.jjjw.jwt.TokenProvider;
 import com.ezen.jjjw.repository.MemberRepository;
+import com.ezen.jjjw.repository.OutMemberRepository;
+import com.ezen.jjjw.repository.RefreshTokenRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -39,6 +46,12 @@ class MemberServiceTest {
 
     @Mock
     private MemberRepository memberRepository;
+
+    @Mock
+    private RefreshTokenRepository refreshTokenRepository;
+
+    @Mock
+    private OutMemberRepository outMemberRepository;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -214,5 +227,78 @@ class MemberServiceTest {
 
         //verify
         verify(memberRepository, times(1)).findByMemberId(loginReqDto.getMemberId());
+    }
+
+    @Test
+    void success_logout() {
+        //given
+        Member member = Member.builder()
+                .memberId("testUser")
+                .nickname("testNickname")
+                .password(passwordEncoder.encode("password"))
+                .build();
+
+        TokenDto tokenDto = tokenProvider.generateTokenDto(member);
+        Optional<RefreshToken> optionalRefreshToken = refreshTokenRepository.findByMemberId(member.getId());
+
+        //stub
+        when(tokenProvider.deleteRefreshToken(member)).thenCallRealMethod();
+
+        //when
+        ResponseEntity<Integer> responseEntity = memberService.logout(member);
+
+        //then
+        assertEquals(responseEntity, ResponseEntity.ok(HttpServletResponse.SC_OK));
+
+        //verify
+        verify(tokenProvider, times(1)).deleteRefreshToken(member);
+    }
+
+    @Test
+    void success_delete() {
+        //given
+        Member member = Member.builder()
+                .memberId("testUser")
+                .nickname("testNickname")
+                .password(passwordEncoder.encode("password"))
+                .build();
+
+        MemberDeleteReqDto deleteReqDto = new MemberDeleteReqDto("password");
+
+        //stub
+        when(member.validatePassword(passwordEncoder, deleteReqDto.getPassword())).thenReturn(true);
+        when(outMemberRepository.save(any(OutMember.class))).thenReturn(new OutMember());
+        doNothing().when(memberRepository).delete(member);
+
+        //when
+        ResponseEntity<Integer> responseEntity = memberService.delete(deleteReqDto, member);
+
+        //then
+        assertEquals(responseEntity, ResponseEntity.ok(HttpServletResponse.SC_OK));
+
+        //verify
+        verify(outMemberRepository, times(1)).save(any(OutMember.class));
+        verify(memberRepository, times(1)).delete(member);
+    }
+
+    @Test
+    void fail_delete() {
+        //given
+        Member member = Member.builder()
+                .memberId("testUser")
+                .nickname("testNickname")
+                .password(passwordEncoder.encode("password"))
+                .build();
+
+        MemberDeleteReqDto deleteReqDto = new MemberDeleteReqDto("password");
+
+        //stub
+        when(member.validatePassword(passwordEncoder, deleteReqDto.getPassword())).thenReturn(false);
+
+        //when
+        ResponseEntity<Integer> responseEntity = memberService.delete(deleteReqDto, member);
+
+        //then
+        assertEquals(responseEntity, ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST));
     }
 }

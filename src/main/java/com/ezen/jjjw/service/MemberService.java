@@ -5,6 +5,7 @@ import com.ezen.jjjw.domain.entity.OutMember;
 import com.ezen.jjjw.dto.request.MemberDeleteReqDto;
 import com.ezen.jjjw.dto.request.MemberLoginReqDto;
 import com.ezen.jjjw.dto.request.MemberSignupReqDto;
+import com.ezen.jjjw.dto.response.ResponseDto;
 import com.ezen.jjjw.dto.response.TokenDto;
 import com.ezen.jjjw.exception.CustomExceptionHandler;
 import com.ezen.jjjw.jwt.TokenProvider;
