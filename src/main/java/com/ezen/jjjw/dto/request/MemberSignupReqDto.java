@@ -3,6 +3,7 @@ package com.ezen.jjjw.dto.request;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
@@ -20,6 +21,7 @@ import javax.validation.constraints.Size;
  * 2023-06-08        sonjia       최초 생성
  *                                회원가입을 진행할 때 데이터를 담아 보낼 역할을 할 dto
  */
+@Setter
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

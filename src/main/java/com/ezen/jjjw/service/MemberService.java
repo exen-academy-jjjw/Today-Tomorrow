@@ -58,6 +58,7 @@ public class MemberService {
         if (null != isPresentMember(memberSignupReqDto.getMemberId())) {
             log.info("중복된 아이디");
             return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
+//            return ResponseEntity.badRequest().build();
         }
 
         // 사용자로부터 입력받은 nickname로 DB에 같은 닉네임이 있는지 확인
