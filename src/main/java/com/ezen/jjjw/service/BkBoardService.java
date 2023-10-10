@@ -11,6 +11,7 @@ import com.ezen.jjjw.exception.CustomExceptionHandler;
 import com.ezen.jjjw.repository.BkBoardRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;

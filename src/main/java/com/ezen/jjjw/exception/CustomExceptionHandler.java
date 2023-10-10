@@ -5,6 +5,8 @@ import com.ezen.jjjw.domain.entity.Comment;
 import com.ezen.jjjw.domain.entity.Member;
 import com.ezen.jjjw.domain.entity.Review;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -31,15 +33,20 @@ public class CustomExceptionHandler {
             log.info("존재하지 않는 사용자");
             return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
         }
-        return null;
+//        return null;
+        log.info("존재해 존재한다고");
+        return ResponseEntity.ok(HttpServletResponse.SC_OK);
     }
 
     public ResponseEntity<Integer> getNotFoundBoardStatus(BkBoard bkBoard) {
+        log.info("존재해 존재한다고1");
         if(bkBoard == null) {
             log.info("존재하지 않는 게시글");
             return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
         }
-        return null;
+//        return null;
+        log.info("존재해 존재한다고");
+        return ResponseEntity.ok(null);
     }
 
     public ResponseEntity<?> getNotFoundReviewStatusOrgetReview(BkBoard bkBoard) {
@@ -49,7 +56,9 @@ public class CustomExceptionHandler {
             log.info("존재하지 않는 리뷰");
             return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
         }
-        return null;
+//        return null;
+        log.info("존재해 존재한다고");
+        return ResponseEntity.ok(null);
     }
 
     public ResponseEntity<?> getNotFoundCommentStatusOrgetComment(BkBoard bkBoard) {
@@ -59,7 +68,9 @@ public class CustomExceptionHandler {
             log.info("존재하지 않는 댓글");
             return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
         }
-        return null;
+//        return null;
+        log.info("존재해 존재한다고");
+        return ResponseEntity.ok(null);
     }
 
     public ResponseEntity<Integer> getNotMatchMemberStatus() {
