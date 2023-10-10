@@ -1,22 +1,18 @@
 package com.ezen.jjjw.service;
 
 import com.ezen.jjjw.domain.entity.Member;
+import com.ezen.jjjw.dto.request.MemberLoginReqDto;
 import com.ezen.jjjw.dto.request.MemberSignupReqDto;
-import com.ezen.jjjw.dto.response.MemberResDto;
+import com.ezen.jjjw.jwt.TokenProvider;
 import com.ezen.jjjw.repository.MemberRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
@@ -47,8 +43,13 @@ class MemberServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
 
+    @Mock
+    private TokenProvider tokenProvider;
+
+    private MockHttpServletResponse response;
+
     @Test
-    void seccess_createMember() {
+    void success_createMember() {
         //given
         MemberSignupReqDto memberSignupReqDto = new MemberSignupReqDto();
         memberSignupReqDto.setMemberId("testUser");
@@ -78,8 +79,9 @@ class MemberServiceTest {
         //given
         Member member = mock(Member.class).builder()
                 .memberId("testUser")
-                .nickname("testNcik")
-                .password(passwordEncoder.encode("password")).build();
+                .nickname("testNick")
+                .password(passwordEncoder.encode("password"))
+                .build();
 
         MemberSignupReqDto memberSignupReqDto = new MemberSignupReqDto();
         memberSignupReqDto.setMemberId("testUser");
@@ -144,5 +146,73 @@ class MemberServiceTest {
         //then
         assertEquals(responseEntity, ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST));
         assertFalse(Boolean.parseBoolean(memberSignupReqDto.getPassword()), memberSignupReqDto.getPasswordConfirm());
+    }
+
+    @Test
+    void success_login() {
+        //given
+        Member member = mock(Member.class).builder()
+                .memberId("testUser")
+                .nickname("testNickname")
+                .password(passwordEncoder.encode("password"))
+                .build();
+
+        MemberLoginReqDto loginReqDto = new MemberLoginReqDto("testUser", "password");
+
+        //stub
+        when(memberRepository.findByMemberId(loginReqDto.getMemberId())).thenReturn(Optional.ofNullable(member));
+        when(member.validatePassword(passwordEncoder, loginReqDto.getPassword())).thenReturn(true);
+
+        //when
+        ResponseEntity<?> responseEntity = memberService.login(loginReqDto, response);
+
+        //then
+        assertEquals(responseEntity, ResponseEntity.ok(member.getNickname()));
+
+        //verify
+        verify(memberRepository, times(1)).findByMemberId(loginReqDto.getMemberId());
+    }
+
+    @Test
+    void fail_login_cause_id() {
+        //given
+        MemberLoginReqDto loginReqDto = new MemberLoginReqDto("testUser", "password");
+
+        //stub
+        when(memberRepository.findByMemberId(loginReqDto.getMemberId())).thenReturn(Optional.empty());
+
+        //when
+        ResponseEntity<?> responseEntity = memberService.login(loginReqDto, response);
+
+        //then
+        assertEquals(responseEntity, ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND));
+
+        //verify
+        verify(memberRepository, times(1)).findByMemberId(loginReqDto.getMemberId());
+    }
+
+    @Test
+    void fail_login_cause_password() {
+        //given
+        Member member = mock(Member.class).builder()
+                .memberId("testUser")
+                .nickname("testNickname")
+                .password(passwordEncoder.encode("password"))
+                .build();
+
+        MemberLoginReqDto loginReqDto = new MemberLoginReqDto("testUser", "password111");
+
+        //stub
+        when(memberRepository.findByMemberId(loginReqDto.getMemberId())).thenReturn(Optional.ofNullable(member));
+        when(member.validatePassword(passwordEncoder, loginReqDto.getPassword())).thenReturn(false);
+
+        //when
+        ResponseEntity<?> responseEntity = memberService.login(loginReqDto, response);
+
+        //then
+        assertEquals(responseEntity, ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST));
+
+        //verify
+        verify(memberRepository, times(1)).findByMemberId(loginReqDto.getMemberId());
     }
 }
