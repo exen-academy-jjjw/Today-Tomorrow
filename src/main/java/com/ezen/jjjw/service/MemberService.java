@@ -5,6 +5,7 @@ import com.ezen.jjjw.domain.entity.OutMember;
 import com.ezen.jjjw.dto.request.MemberDeleteReqDto;
 import com.ezen.jjjw.dto.request.MemberLoginReqDto;
 import com.ezen.jjjw.dto.request.MemberSignupReqDto;
+import com.ezen.jjjw.dto.response.ResponseDto;
 import com.ezen.jjjw.dto.response.TokenDto;
 import com.ezen.jjjw.exception.CustomExceptionHandler;
 import com.ezen.jjjw.jwt.TokenProvider;
@@ -13,6 +14,7 @@ import com.ezen.jjjw.repository.OutMemberRepository;
 import com.ezen.jjjw.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -58,6 +60,7 @@ public class MemberService {
         if (null != isPresentMember(memberSignupReqDto.getMemberId())) {
             log.info("중복된 아이디");
             return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
+//            return ResponseEntity.badRequest().build();
         }
 
         // 사용자로부터 입력받은 nickname로 DB에 같은 닉네임이 있는지 확인
