@@ -5,8 +5,6 @@ import com.ezen.jjjw.domain.entity.Comment;
 import com.ezen.jjjw.domain.entity.Member;
 import com.ezen.jjjw.domain.entity.Review;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
@@ -34,7 +32,6 @@ public class CustomExceptionHandler {
             return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
         }
 //        return null;
-        log.info("존재해 존재한다고");
         return ResponseEntity.ok(HttpServletResponse.SC_OK);
     }
 
@@ -45,7 +42,6 @@ public class CustomExceptionHandler {
             return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
         }
 //        return null;
-        log.info("존재해 존재한다고");
         return ResponseEntity.ok(null);
     }
 
@@ -57,7 +53,6 @@ public class CustomExceptionHandler {
             return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
         }
 //        return null;
-        log.info("존재해 존재한다고");
         return ResponseEntity.ok(null);
     }
 
@@ -69,7 +64,6 @@ public class CustomExceptionHandler {
             return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
         }
 //        return null;
-        log.info("존재해 존재한다고");
         return ResponseEntity.ok(null);
     }
 

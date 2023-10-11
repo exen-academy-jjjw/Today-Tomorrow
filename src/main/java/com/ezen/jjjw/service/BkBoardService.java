@@ -50,11 +50,13 @@ public class BkBoardService {
     @Transactional
     public ResponseEntity<Integer> update(Long postId, BkBoardUpdateReqDto bkrequest, Member member) {
         BkBoard bkBoard = (bkBoardRepository.findById(postId)).get();
-        customExceptionHandler.getNotFoundBoardStatus(bkBoard);
+        ResponseEntity<Integer> notFoundBoardStatus = customExceptionHandler.getNotFoundBoardStatus(bkBoard);
 
         Member author = bkBoard.getMember();
         if(!author.getMemberId().equals(member.getMemberId())) {
-            return customExceptionHandler.getNotMatchMemberStatus();
+//            return customExceptionHandler.getNotMatchMemberStatus();
+            log.info("일치하지 않는 사용자");
+            return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
         }
 
         bkBoard.update(bkrequest);
@@ -70,7 +72,9 @@ public class BkBoardService {
 
         Member author = bkBoard.getMember();
         if(!author.getMemberId().equals(member.getMemberId())) {
-            return customExceptionHandler.getNotMatchMemberStatus();
+//            return customExceptionHandler.getNotMatchMemberStatus();
+            log.info("일치하지 않는 사용자");
+            return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
         }
 
         return ResponseEntity.ok(HttpServletResponse.SC_OK);
@@ -94,7 +98,9 @@ public class BkBoardService {
 
         Member author = bkBoard.getMember();
         if(!author.getMemberId().equals(member.getMemberId())) {
-            return customExceptionHandler.getNotMatchMemberStatus();
+//            return customExceptionHandler.getNotMatchMemberStatus();
+            log.info("일치하지 않는 사용자");
+            return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
         }
 
         return ResponseEntity.ok(HttpServletResponse.SC_OK);
@@ -151,7 +157,9 @@ public class BkBoardService {
 
         Member author = bkBoard.getMember();
         if(!author.getMemberId().equals(member.getMemberId())) {
-            return customExceptionHandler.getNotMatchMemberStatus();
+//            return customExceptionHandler.getNotMatchMemberStatus();
+            log.info("일치하지 않는 사용자");
+            return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
         }
 
         bkBoard.updateCompletion(requestCompletion);
@@ -168,7 +176,9 @@ public class BkBoardService {
 
         Member author = bkBoard.getMember();
         if(!author.getMemberId().equals(member.getMemberId())) {
-            return customExceptionHandler.getNotMatchMemberStatus();
+//            return customExceptionHandler.getNotMatchMemberStatus();
+            log.info("일치하지 않는 사용자");
+            return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
         }
 
         bkBoard.updateShare(requestShare);

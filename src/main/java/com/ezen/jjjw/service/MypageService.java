@@ -52,7 +52,8 @@ public class MypageService {
             Optional<Member> byNickname = memberRepository.findByNickname(request.getNickname());
             if(byNickname.isPresent()) {
                 log.info("닉네임 중복");
-                return customExceptionHandler.getMatchMemberNickname();
+//                return customExceptionHandler.getMatchMemberNickname();\
+                return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
             }
         } catch(Exception e) {
             e.printStackTrace();

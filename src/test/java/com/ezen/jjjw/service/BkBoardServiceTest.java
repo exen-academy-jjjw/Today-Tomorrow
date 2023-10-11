@@ -155,8 +155,8 @@ public class BkBoardServiceTest {
         ResponseEntity<Integer> responseEntity = bkBoardService.update(postId, bkBoardUpdateReqDto, member2);
 
         //then
-        System.out.println("response확인 " + responseEntity);
-//        assertEquals(400, responseEntity.getStatusCodeValue());
+        assertEquals(200, responseEntity.getStatusCodeValue());
+        assertEquals(400, responseEntity.getBody());
 
         //verify
         verify(bkBoardRepository, times(1)).findById(postId);
