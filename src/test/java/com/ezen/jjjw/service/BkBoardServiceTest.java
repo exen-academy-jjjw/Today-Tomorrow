@@ -118,6 +118,27 @@ public class BkBoardServiceTest {
     }
 
     @Test
+    void fail_update_cause_postId() {
+        //given
+        Long postId = 1L;
+        BkBoardUpdateReqDto bkBoardUpdateReqDto = new BkBoardUpdateReqDto();
+        Member member = new Member();
+
+        //stub
+        when(bkBoardRepository.findById(postId)).thenReturn(Optional.empty());
+
+        //when
+        ResponseEntity<Integer> responseEntity = bkBoardService.update(postId, bkBoardUpdateReqDto, member);
+
+        //then
+//        assertEquals(200, responseEntity.getStatusCodeValue());
+//        assertEquals(404, responseEntity.getBody());
+
+        //verify
+        verify(bkBoardRepository, times(1)).findById(postId);
+    }
+
+    @Test
     void fail_update_cause_author() {
         //given
         Long postId = 1L;

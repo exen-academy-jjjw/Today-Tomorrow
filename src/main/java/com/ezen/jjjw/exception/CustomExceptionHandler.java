@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * packageName    : com.ezen.jjjw.exception
@@ -36,7 +37,6 @@ public class CustomExceptionHandler {
     }
 
     public ResponseEntity<Integer> getNotFoundBoardStatus(BkBoard bkBoard) {
-        log.info("존재해 존재한다고1");
         if(bkBoard == null) {
             log.info("존재하지 않는 게시글");
             return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
@@ -67,13 +67,13 @@ public class CustomExceptionHandler {
         return ResponseEntity.ok(null);
     }
 
-    public ResponseEntity<Integer> getNotMatchMemberStatus() {
-        log.info("일치하지 않는 사용자");
-        return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
-    }
-
-    public ResponseEntity<Integer> getMatchMemberNickname() {
-        log.info("중복된 닉네임");
-        return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
-    }
+//    public ResponseEntity<Integer> getNotMatchMemberStatus() {
+//        log.info("일치하지 않는 사용자");
+//        return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
+//    }
+//
+//    public ResponseEntity<Integer> getMatchMemberNickname() {
+//        log.info("중복된 닉네임");
+//        return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
+//    }
 }
