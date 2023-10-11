@@ -50,13 +50,16 @@ public class BkBoardService {
 
     @Transactional
     public ResponseEntity<Integer> update(Long postId, BkBoardUpdateReqDto bkrequest, Member member) {
-        BkBoard bkBoard = (bkBoardRepository.findById(postId)).get();
-//        Optional<BkBoard> optionalBkBoard = (bkBoardRepository.findById(postId));
-        customExceptionHandler.getNotFoundBoardStatus(bkBoard);
+        Optional<BkBoard> optionalBkBoard = bkBoardRepository.findById(postId);
+        if(!optionalBkBoard.isPresent()) {
+            log.info("존재하지 않는 게시글");
+            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
+        }
+
+        BkBoard bkBoard = optionalBkBoard.get();
 
         Member author = bkBoard.getMember();
         if(!author.getMemberId().equals(member.getMemberId())) {
-//            return customExceptionHandler.getNotMatchMemberStatus();
             log.info("일치하지 않는 사용자");
             return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
         }
