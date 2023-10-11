@@ -2,13 +2,14 @@
 이젠 아카데미 프로젝트 Team.재정지원  
 트러블 슈팅 정리
 
+---
+손지아 트러블 슈팅
+
 <br>
 
 <details>
-<summary>손지아 트러블 슈팅</summary>
+<summary>1. BkBoardService 유닛 테스트 진행 도중 문제 발생</summary>
 <p>
-
-### BkBoardService 유닛 테스트 진행 도중 문제 발생
 
 ![img.png](img/img.png)  
 게시글 업데이트 메서드에 대해 테스트 코드를 작성하고 있었다.  
@@ -34,6 +35,24 @@ customExceptionHandler에 아예 진입을 못하고 있기도 하고, 생각해
 ![img.png](img/img_5.png)  
 테스트 통과.  
 왜 customExceptionHandler에 진입하지 못했던 건지, 어떻게 하면 진입하도록 할 수 있을지에 대해서는 추후 더 알아봐야겠다.
+
+---
+
+### CustomExceptionHandler 의존성 주입 문제
+
+<strong>문제 상황</strong> :  
+CustomExceptionHandler 의존성 주입이 안 되고 있어서 그 안에 있는 메서드에 진입하지를 못한다.
+
+<strong>시도해본 해결법</strong> :  
+1. 애플리케이션 클래스에 @ComponentScan 어노테이션 적용해보기
+<br /> > 권한이 필요하지 않은 경로(회원가입, 로그인 등) 요청에서 401 Unauthorized 에러 발생. 어노테이션 붙이기 전에는 없던 에러이다.  
+<br /> >> 시큐리티 설정한 부분에 권한 관련한 코드(authenticationEntryPointException)에서 걸리는 것으로 추정. 그런데 어노테이션을 붙이자마자 이렇게 되는 이유가 뭐지?
+
+<strong>결론</strong> :  
+CustomExceptionHandler에는 아무런 문제가 없었다.  
+예외 처리를 하기 바로 윗 부분에 repository에서 게시글 객체를 찾는 부분이 있는데, 존재하지 않는 게시글을 꺼내려고 할 때 에러가 발생하며 애초에 메서드에 진입할 여지가 없던 것이었다.  
+지금은 애초에 Optional<BkBoard> 객체로 꺼내온 후, 이후에 isPresent()를 사용해 안에 값이 존재하는지 그 여부를 따지는 것으로 수정했다.  
+이미 처음과 같이 작성되어 있는 곳이 많이 있기 때문에 전체적으로 수정에 들어가야겠다.
 
 </p>
 </details>
