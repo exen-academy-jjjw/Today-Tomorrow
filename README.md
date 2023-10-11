@@ -44,7 +44,8 @@ CustomExceptionHandler 의존성 주입이 안 되고 있어서 그 안에 있�
 
 <strong>시도해본 해결법</strong> :  
 1. 애플리케이션 클래스에 @ComponentScan 어노테이션 적용해보기
-<br /> > 권한이 필요하지 않은 경로(회원가입, 로그인 등) 요청에서 401 Unauthorized 에러 발생. 어노테이션 붙이기 전에는 없던 에러이다.
+<br /> > 권한이 필요하지 않은 경로(회원가입, 로그인 등) 요청에서 401 Unauthorized 에러 발생. 어노테이션 붙이기 전에는 없던 에러이다.  
+<br /> >> 시큐리티 설정한 부분에 권한 관련한 코드(authenticationEntryPointException)에서 걸리는 것으로 추정. 그런데 어노테이션을 붙이자마자 이렇게 되는 이유가 뭐지?
 
 </p>
 </details>
