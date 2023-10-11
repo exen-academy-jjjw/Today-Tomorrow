@@ -52,7 +52,7 @@ public class BkBoardService {
     public ResponseEntity<Integer> update(Long postId, BkBoardUpdateReqDto bkrequest, Member member) {
         BkBoard bkBoard = (bkBoardRepository.findById(postId)).get();
 //        Optional<BkBoard> optionalBkBoard = (bkBoardRepository.findById(postId));
-        customExceptionHandler.getNotFoundBoardStatus(bkBoard.get());
+        customExceptionHandler.getNotFoundBoardStatus(bkBoard);
 
         Member author = bkBoard.getMember();
         if(!author.getMemberId().equals(member.getMemberId())) {

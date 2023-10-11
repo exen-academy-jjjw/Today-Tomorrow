@@ -35,5 +35,16 @@ customExceptionHandler에 아예 진입을 못하고 있기도 하고, 생각해
 테스트 통과.  
 왜 customExceptionHandler에 진입하지 못했던 건지, 어떻게 하면 진입하도록 할 수 있을지에 대해서는 추후 더 알아봐야겠다.
 
+---
+
+### CustomExceptionHandler 의존성 주입 문제
+
+<strong>문제 상황</strong> :  
+CustomExceptionHandler 의존성 주입이 안 되고 있어서 그 안에 있는 메서드에 진입하지를 못한다.
+
+<strong>시도해본 해결법</strong> :  
+1. 애플리케이션 클래스에 @ComponentScan 어노테이션 적용해보기
+<br /> > 권한이 필요하지 않은 경로(회원가입, 로그인 등) 요청에서 401 Unauthorized 에러 발생. 어노테이션 붙이기 전에는 없던 에러이다.
+
 </p>
 </details>

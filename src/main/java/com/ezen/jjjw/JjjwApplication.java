@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 @EnableJpaAuditing
 @SpringBootApplication
-@ComponentScan(basePackages = "com.ezen.jjjw.exception")
+//@ComponentScan(basePackages = "com.ezen.jjjw.exception")
 public class JjjwApplication {
 
 	public static void main(String[] args) {
