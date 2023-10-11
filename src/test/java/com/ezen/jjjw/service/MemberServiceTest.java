@@ -6,7 +6,6 @@ import com.ezen.jjjw.domain.entity.RefreshToken;
 import com.ezen.jjjw.dto.request.MemberDeleteReqDto;
 import com.ezen.jjjw.dto.request.MemberLoginReqDto;
 import com.ezen.jjjw.dto.request.MemberSignupReqDto;
-import com.ezen.jjjw.dto.response.ResponseDto;
 import com.ezen.jjjw.dto.response.TokenDto;
 import com.ezen.jjjw.jwt.TokenProvider;
 import com.ezen.jjjw.repository.MemberRepository;
@@ -36,7 +35,7 @@ import static org.mockito.Mockito.*;
  * ===========================================================
  * DATE              AUTHOR             NOTE
  * -----------------------------------------------------------
- * 2023-10-08        wldk9       최초 생성
+ * 2023-10-08        sonjia       최초 생성
  */
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
