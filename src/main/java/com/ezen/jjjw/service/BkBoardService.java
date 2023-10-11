@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -72,12 +73,16 @@ public class BkBoardService {
 
     @Transactional
     public ResponseEntity<Integer> updateGetMember(Long postId, Member member) {
-        BkBoard bkBoard = (bkBoardRepository.findById(postId)).get();
-        customExceptionHandler.getNotFoundBoardStatus(bkBoard);
+        Optional<BkBoard> optionalBkBoard = bkBoardRepository.findById(postId);
+        if(!optionalBkBoard.isPresent()) {
+            log.info("존재하지 않는 게시글");
+            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
+        }
+
+        BkBoard bkBoard = optionalBkBoard.get();
 
         Member author = bkBoard.getMember();
         if(!author.getMemberId().equals(member.getMemberId())) {
-//            return customExceptionHandler.getNotMatchMemberStatus();
             log.info("일치하지 않는 사용자");
             return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
         }
@@ -87,8 +92,11 @@ public class BkBoardService {
 
     @Transactional
     public ResponseEntity<Integer> delete(Long postId) {
-        BkBoard bkBoard = (bkBoardRepository.findById(postId)).get();
-        customExceptionHandler.getNotFoundBoardStatus(bkBoard);
+        Optional<BkBoard> optionalBkBoard = bkBoardRepository.findById(postId);
+        if(!optionalBkBoard.isPresent()) {
+            log.info("존재하지 않는 게시글");
+            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
+        }
 
         bkBoardRepository.deleteById(postId);
 
@@ -98,12 +106,16 @@ public class BkBoardService {
 
     @Transactional
     public ResponseEntity<Integer> deleteGetMember(Long postId, Member member) {
-        BkBoard bkBoard = (bkBoardRepository.findById(postId)).get();
-        customExceptionHandler.getNotFoundBoardStatus(bkBoard);
+        Optional<BkBoard> optionalBkBoard = bkBoardRepository.findById(postId);
+        if(!optionalBkBoard.isPresent()) {
+            log.info("존재하지 않는 게시글");
+            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
+        }
+
+        BkBoard bkBoard = optionalBkBoard.get();
 
         Member author = bkBoard.getMember();
         if(!author.getMemberId().equals(member.getMemberId())) {
-//            return customExceptionHandler.getNotMatchMemberStatus();
             log.info("일치하지 않는 사용자");
             return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
         }
@@ -113,8 +125,13 @@ public class BkBoardService {
 
     @Transactional
     public ResponseEntity<?> getBkBoardById(Long postId) {
-        BkBoard bkBoard = (bkBoardRepository.findById(postId)).get();
-        customExceptionHandler.getNotFoundBoardStatus(bkBoard);
+        Optional<BkBoard> optionalBkBoard = bkBoardRepository.findById(postId);
+        if(!optionalBkBoard.isPresent()) {
+            log.info("존재하지 않는 게시글");
+            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
+        }
+
+        BkBoard bkBoard = optionalBkBoard.get();
 
         BkBoardResDto bkBoardResDto = BkBoardResDto.builder()
                 .postId(bkBoard.getPostId())
@@ -131,11 +148,18 @@ public class BkBoardService {
         return ResponseEntity.ok(bkBoardResDto);
     }
 
+//    @Transactional
+//    public ResponseEntity<List<BkBoard>> getAllBkBoardDto(int page, Member member) {
+//        PageRequest pageRequest = PageRequest.of(page, 10, Sort.by("postId").descending());
+//        Page<BkBoard> bkBoardPage = bkBoardRepository.findAllByMemberId(member.getId(), pageRequest);
+//        List<BkBoard> bkBoardList = bkBoardPage.getContent();
+//        return ResponseEntity.ok(bkBoardList);
+//    }
     @Transactional
     public ResponseEntity<List<BkBoard>> getAllBkBoardDto(int page, Member member) {
         PageRequest pageRequest = PageRequest.of(page, 10, Sort.by("postId").descending());
         Page<BkBoard> bkBoardPage = bkBoardRepository.findAllByMemberId(member.getId(), pageRequest);
-        List<BkBoard> bkBoardList = bkBoardPage.getContent();
+        List<BkBoard> bkBoardList = (bkBoardPage != null) ? bkBoardPage.getContent() : null;
         return ResponseEntity.ok(bkBoardList);
     }
 

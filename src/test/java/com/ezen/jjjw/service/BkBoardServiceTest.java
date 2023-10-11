@@ -1,9 +1,11 @@
 package com.ezen.jjjw.service;
 
+import com.amazonaws.Response;
 import com.ezen.jjjw.domain.entity.BkBoard;
 import com.ezen.jjjw.domain.entity.Member;
 import com.ezen.jjjw.dto.request.BkBoardReqDto;
 import com.ezen.jjjw.dto.request.BkBoardUpdateReqDto;
+import com.ezen.jjjw.dto.response.BkBoardResDto;
 import com.ezen.jjjw.exception.CustomExceptionHandler;
 import com.ezen.jjjw.jwt.TokenProvider;
 import com.ezen.jjjw.repository.BkBoardRepository;
@@ -13,13 +15,18 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.verify;
 
 /**
  * packageName    : com.ezen.jjjw.service
@@ -131,8 +138,8 @@ public class BkBoardServiceTest {
         ResponseEntity<Integer> responseEntity = bkBoardService.update(postId, bkBoardUpdateReqDto, member);
 
         //then
-//        assertEquals(200, responseEntity.getStatusCodeValue());
-//        assertEquals(404, responseEntity.getBody());
+        assertEquals(200, responseEntity.getStatusCodeValue());
+        assertEquals(404, responseEntity.getBody());
 
         //verify
         verify(bkBoardRepository, times(1)).findById(postId);
@@ -181,5 +188,127 @@ public class BkBoardServiceTest {
 
         //verify
         verify(bkBoardRepository, times(1)).findById(postId);
+    }
+
+    @Test
+    void success_delete() {
+        //given
+        Long postId = 1L;
+        BkBoard bkBoard = BkBoard.builder()
+                .postId(postId)
+                .category("etc")
+                .title("title")
+                .content("content")
+                .completion(0)
+                .share(0)
+                .build();
+
+        //stub
+        when(bkBoardRepository.findById(postId)).thenReturn(Optional.of(bkBoard));
+        doNothing().when(bkBoardRepository).deleteById(postId);
+
+        //when
+        ResponseEntity<Integer> responseEntity = bkBoardService.delete(postId);
+
+        //then
+        assertEquals(200, responseEntity.getStatusCodeValue());
+        assertEquals(200, responseEntity.getBody());
+
+        //verify
+        verify(bkBoardRepository, times(1)).findById(postId);
+        verify(bkBoardRepository, times(1)).deleteById(postId);
+    }
+
+    @Test
+    void fail_delete_cause_postId() {
+        //given
+        Long postId = 1L;
+
+        //stub
+        when(bkBoardRepository.findById(postId)).thenReturn(Optional.empty());
+
+        //when
+        ResponseEntity<Integer> responseEntity = bkBoardService.delete(postId);
+
+        //then
+        assertEquals(200, responseEntity.getStatusCodeValue());
+        assertEquals(404, responseEntity.getBody());
+
+        //verify
+        verify(bkBoardRepository, times(1)).findById(postId);
+    }
+
+    @Test
+    void success_getBkBoardById() {
+        //given
+        Long postId = 1L;
+        Member member = Member.builder()
+                .id(1L)
+                .memberId("testUser")
+                .nickname("testNick")
+                .build();
+
+        BkBoard bkBoard = BkBoard.builder()
+                .postId(postId)
+                .member(member)
+                .build();
+
+        //stub
+        when(bkBoardRepository.findById(postId)).thenReturn(Optional.of(bkBoard));
+
+        //when
+        ResponseEntity<?> responseEntity = bkBoardService.getBkBoardById(postId);
+
+        //then
+        assertEquals(200, responseEntity.getStatusCodeValue());
+        assertEquals(1L, ((BkBoardResDto) responseEntity.getBody()).getPostId());
+
+        //verify
+        verify(bkBoardRepository, times(1)).findById(postId);
+    }
+
+    @Test
+    void fail_getBkBoardById_cause_postId() {
+        //given
+        Long postId = 1L;
+
+        //stub
+        when(bkBoardRepository.findById(postId)).thenReturn(Optional.empty());
+
+        //when
+        ResponseEntity<?> responseEntity = bkBoardService.getBkBoardById(postId);
+
+        //then
+        assertEquals(200, responseEntity.getStatusCodeValue());
+        assertEquals(404, responseEntity.getBody());
+
+        //verify
+        verify(bkBoardRepository, times(1)).findById(postId);
+    }
+
+    @Test
+    void success_getAllBkBoardDto() {
+        //given
+
+        //stub
+
+        //when
+
+        //then
+
+        //verify
+    }
+
+    @Test
+    void test() {
+        //given
+
+        //stub
+
+        //when
+
+        //then
+
+        //verify
     }
 }
