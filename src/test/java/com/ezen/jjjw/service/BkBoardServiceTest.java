@@ -21,8 +21,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -289,12 +288,30 @@ public class BkBoardServiceTest {
     @Test
     void success_getAllBkBoardDto() {
         //given
+        int page = 0;
+        Long memberId = 1L;
+
+        Member member = new Member();
+        member.setId(memberId);
+        member.setMemberId("testUser");
+        member.setNickname("testNick");
+        member.setPassword("password");
+
+        List<BkBoard> bkBoardList = new ArrayList<>();
+        BkBoard bkBoard = BkBoard.builder()
+                .postId(1L)
+                .member(member).build();
+        bkBoardList.add(bkBoard);
+
+        member.setBkBoardList(bkBoardList);
 
         //stub
 
         //when
+        ResponseEntity<List<BkBoard>> responseEntity = bkBoardService.getAllBkBoardDto(page, member);
 
         //then
+        assertEquals(200, responseEntity.getStatusCodeValue());
 
         //verify
     }

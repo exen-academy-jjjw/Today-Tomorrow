@@ -157,8 +157,12 @@ public class BkBoardService {
 //    }
     @Transactional
     public ResponseEntity<List<BkBoard>> getAllBkBoardDto(int page, Member member) {
+        log.info("page확인 " + page);
+        log.info("member확인 " + member.getMemberId() + ", member Id " + member.getId());
         PageRequest pageRequest = PageRequest.of(page, 10, Sort.by("postId").descending());
+        log.info("pageRequest확인 " + pageRequest);
         Page<BkBoard> bkBoardPage = bkBoardRepository.findAllByMemberId(member.getId(), pageRequest);
+        log.info("확인 " + bkBoardPage);
         List<BkBoard> bkBoardList = (bkBoardPage != null) ? bkBoardPage.getContent() : null;
         return ResponseEntity.ok(bkBoardList);
     }
