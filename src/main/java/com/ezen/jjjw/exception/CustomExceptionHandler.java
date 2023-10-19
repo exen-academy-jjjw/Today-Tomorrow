@@ -32,7 +32,6 @@ public class CustomExceptionHandler {
             log.info("존재하지 않는 사용자");
             return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
         }
-//        return null;
         return ResponseEntity.ok(HttpServletResponse.SC_OK);
     }
 
@@ -51,7 +50,6 @@ public class CustomExceptionHandler {
             log.info("존재하지 않는 리뷰");
             return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
         }
-//        return null;
         return ResponseEntity.ok(null);
     }
 
@@ -62,7 +60,6 @@ public class CustomExceptionHandler {
             log.info("존재하지 않는 댓글");
             return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
         }
-//        return null;
         return ResponseEntity.ok(null);
     }
 

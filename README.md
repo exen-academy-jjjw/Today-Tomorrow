@@ -8,7 +8,7 @@
 <br>
 
 <details>
-<summary>1. BkBoardService 유닛 테스트 진행 도중 문제 발생</summary>
+<summary>1. BkBoardService 유닛 테스트 진행 도중 CustomExceptionHandler에 문제 발생</summary>
 <p>
 
 ![img.png](img/img.png)  
@@ -53,6 +53,15 @@ CustomExceptionHandler에는 아무런 문제가 없었다.
 예외 처리를 하기 바로 윗 부분에 repository에서 게시글 객체를 찾는 부분이 있는데, 존재하지 않는 게시글을 꺼내려고 할 때 에러가 발생하며 애초에 메서드에 진입할 여지가 없던 것이었다.  
 지금은 애초에 Optional<BkBoard> 객체로 꺼내온 후, 이후에 isPresent()를 사용해 안에 값이 존재하는지 그 여부를 따지는 것으로 수정했다.  
 이미 처음과 같이 작성되어 있는 곳이 많이 있기 때문에 전체적으로 수정에 들어가야겠다.
+
+</p>
+</details>
+<details>
+<summary>2. BkBoardService 유닛 테스트 중 페이징 처리 테스트 관련</summary>
+<p>
+
+<strong>문제 상황 :</strong>  
+테스트를 하며 member 객체에 List<BkBoard>값을 넣어주었음에도 불구하고 bkBoardPage 값이 null로 반환되는 상황
 
 </p>
 </details>

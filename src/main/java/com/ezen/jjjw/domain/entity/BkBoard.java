@@ -4,10 +4,7 @@ import com.ezen.jjjw.dto.request.BkBoardUpdateReqDto;
 import com.ezen.jjjw.dto.request.CompletionReqDto;
 import com.ezen.jjjw.dto.request.ShareReqDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;

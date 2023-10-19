@@ -2,10 +2,7 @@ package com.ezen.jjjw.domain.entity;
 
 import com.ezen.jjjw.dto.request.MypageRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,6 +28,7 @@ import java.util.Objects;
 @Entity
 @Builder
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Member extends Timestamped {
