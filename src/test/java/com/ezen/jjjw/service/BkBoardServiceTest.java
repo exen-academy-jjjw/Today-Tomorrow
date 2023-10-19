@@ -1,16 +1,12 @@
 package com.ezen.jjjw.service;
 
-import com.amazonaws.Response;
 import com.ezen.jjjw.domain.entity.BkBoard;
 import com.ezen.jjjw.domain.entity.Member;
 import com.ezen.jjjw.dto.request.BkBoardReqDto;
 import com.ezen.jjjw.dto.request.BkBoardUpdateReqDto;
 import com.ezen.jjjw.dto.request.CompletionReqDto;
 import com.ezen.jjjw.dto.response.BkBoardResDto;
-import com.ezen.jjjw.exception.CustomExceptionHandler;
-import com.ezen.jjjw.jwt.TokenProvider;
 import com.ezen.jjjw.repository.BkBoardRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
