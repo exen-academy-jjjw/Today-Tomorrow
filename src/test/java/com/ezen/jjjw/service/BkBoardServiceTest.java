@@ -47,12 +47,6 @@ public class BkBoardServiceTest {
     private BkBoardRepository bkBoardRepository;
 
     @Mock
-    private CustomExceptionHandler customExceptionHandler;
-
-    @Mock
-    private TokenProvider tokenProvider;
-
-    @Mock
     private PasswordEncoder passwordEncoder;
 
     @Test
