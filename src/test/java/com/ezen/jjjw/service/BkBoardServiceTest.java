@@ -5,6 +5,7 @@ import com.ezen.jjjw.domain.entity.BkBoard;
 import com.ezen.jjjw.domain.entity.Member;
 import com.ezen.jjjw.dto.request.BkBoardReqDto;
 import com.ezen.jjjw.dto.request.BkBoardUpdateReqDto;
+import com.ezen.jjjw.dto.request.CompletionReqDto;
 import com.ezen.jjjw.dto.response.BkBoardResDto;
 import com.ezen.jjjw.exception.CustomExceptionHandler;
 import com.ezen.jjjw.jwt.TokenProvider;
@@ -450,15 +451,129 @@ public class BkBoardServiceTest {
     }
 
     @Test
-    void test() {
+    void success_updateCompletion() {
         //given
+        Long postId = 1L;
+        Member member = new Member();
+        member.setId(1L);
+        member.setMemberId("testUser");
+        member.setNickname("testNick");
+        member.setPassword(passwordEncoder.encode("password"));
+
+        List<BkBoard> bkBoardList = new ArrayList<>();
+        BkBoard bkBoard = BkBoard.builder()
+                .postId(postId)
+                .member(member)
+                .title("title")
+                .content("content")
+                .completion(0)
+                .share(0)
+                .build();
+        bkBoardList.add(bkBoard);
+
+        member.setBkBoardList(bkBoardList);
+
+        CompletionReqDto completionReqDto = new CompletionReqDto();
+        completionReqDto.setPostId(postId);
+        completionReqDto.setCompletion(1);
 
         //stub
+        when(bkBoardRepository.findById(postId)).thenReturn(Optional.ofNullable(bkBoard));
+        when(bkBoardRepository.save(bkBoard)).thenReturn(new BkBoard());
 
         //when
+        ResponseEntity<Integer> responseEntity = bkBoardService.updateCompletion(postId, completionReqDto, member);
 
         //then
+        assertEquals(200, responseEntity.getStatusCodeValue());
+        assertEquals(1, responseEntity.getBody());
 
         //verify
+        verify(bkBoardRepository, times(1)).findById(postId);
+        verify(bkBoardRepository, times(1)).save(bkBoard);
+    }
+
+    @Test
+    void fail_updateCompletion_cause_postId() {
+        //given
+        Long postId = 2L;
+        Member member = new Member();
+        member.setId(1L);
+        member.setMemberId("testUser");
+        member.setNickname("testNick");
+        member.setPassword(passwordEncoder.encode("password"));
+
+        List<BkBoard> bkBoardList = new ArrayList<>();
+        BkBoard bkBoard = BkBoard.builder()
+                .postId(1L)
+                .member(member)
+                .title("title")
+                .content("content")
+                .completion(0)
+                .share(0)
+                .build();
+        bkBoardList.add(bkBoard);
+
+        member.setBkBoardList(bkBoardList);
+
+        CompletionReqDto completionReqDto = new CompletionReqDto();
+        completionReqDto.setPostId(postId);
+        completionReqDto.setCompletion(1);
+
+        //stub
+        when(bkBoardRepository.findById(postId)).thenReturn(Optional.empty());
+
+        //when
+        ResponseEntity<Integer> responseEntity = bkBoardService.updateCompletion(postId, completionReqDto, member);
+
+        //then
+        assertEquals(200, responseEntity.getStatusCodeValue());
+        assertEquals(404, responseEntity.getBody());
+
+        //verify
+        verify(bkBoardRepository, times(1)).findById(postId);
+    }
+
+    @Test
+    void fail_updateCompletion_cause_member() {
+        //given
+        Long postId = 1L;
+        Member member = new Member();
+        member.setId(1L);
+        member.setMemberId("testUser");
+        member.setNickname("testNick");
+        member.setPassword(passwordEncoder.encode("password"));
+
+        Member member2 = new Member();
+        member.setId(2L);
+        member.setMemberId("testUser");
+        member.setNickname("testNick");
+        member.setPassword(passwordEncoder.encode("password"));
+
+        BkBoard bkBoard = BkBoard.builder()
+                .postId(postId)
+                .member(member)
+                .title("title")
+                .content("content")
+                .completion(0)
+                .share(0)
+                .build();
+
+        CompletionReqDto completionReqDto = new CompletionReqDto();
+        completionReqDto.setPostId(postId);
+        completionReqDto.setCompletion(1);
+
+        //stub
+        when(bkBoardRepository.findById(postId)).thenReturn(Optional.ofNullable(bkBoard));
+
+        //when
+        ResponseEntity<Integer> responseEntity = bkBoardService.updateCompletion(postId, completionReqDto, member2);
+
+        //then
+        assertEquals(200, responseEntity.getStatusCodeValue());
+        assertEquals(400, responseEntity.getBody());
+
+        //verify
+        verify(bkBoardRepository, times(1)).findById(postId);
     }
 }
