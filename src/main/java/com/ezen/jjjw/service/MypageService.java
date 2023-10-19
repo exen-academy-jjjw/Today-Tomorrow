@@ -71,7 +71,11 @@ public class MypageService {
 
     @Transactional
     public ResponseEntity<Integer> updatePassword(MypageRequestDto request, Member member) {
-        customExceptionHandler.getNotFoundMemberStatus(member);
+        if(member == null) {
+            log.info("존재하지 않는 사용자");
+            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
+        }
+
         String oldPassword = member.getPassword();
 
         if(!passwordEncoder.matches(request.getPassword(), oldPassword)){

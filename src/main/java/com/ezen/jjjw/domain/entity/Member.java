@@ -2,6 +2,7 @@ package com.ezen.jjjw.domain.entity;
 
 import com.ezen.jjjw.dto.request.MypageRequestDto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
 import org.hibernate.Hibernate;
 import org.hibernate.annotations.ColumnDefault;

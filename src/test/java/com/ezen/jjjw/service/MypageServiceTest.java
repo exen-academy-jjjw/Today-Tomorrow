@@ -6,6 +6,7 @@ import com.ezen.jjjw.dto.request.MypageRequestDto;
 import com.ezen.jjjw.dto.response.MypageResponseDto;
 import com.ezen.jjjw.repository.BkBoardRepository;
 import com.ezen.jjjw.repository.MemberRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -171,5 +172,29 @@ public class MypageServiceTest {
 
         //verify
         verify(memberRepository, times(1)).findByNickname(mypageRequestDto.getNickname());
+    }
+
+    @Test
+    void success_updatePassword() throws JsonProcessingException {
+        //given
+        MypageRequestDto requestDto = new MypageRequestDto();
+        requestDto.setPassword("password");
+        requestDto.setNewPassword("updatePassword");
+
+        Member member = Member.builder()
+                .id(1L)
+                .memberId("testUser")
+                .nickname("testNick")
+                .password(passwordEncoder.encode("password"))
+                .build();
+
+        System.out.println("패스워드 확인 : " + member.getPassword());
+        //stub
+
+        //when
+
+        //then
+
+        //verify
     }
 }
