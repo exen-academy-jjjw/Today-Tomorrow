@@ -46,7 +46,11 @@ public class MypageService {
     //닉네임 변경
     @Transactional
     public ResponseEntity<Integer> updateNick(MypageRequestDto request, Member member) {
-        customExceptionHandler.getNotFoundMemberStatus(member);
+//        customExceptionHandler.getNotFoundMemberStatus(member);
+        if(member == null) {
+            log.info("존재하지 않는 사용자");
+            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
+        }
 
         try {
             Optional<Member> byNickname = memberRepository.findByNickname(request.getNickname());
