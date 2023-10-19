@@ -15,9 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -286,34 +284,169 @@ public class BkBoardServiceTest {
     }
 
     @Test
-    void success_getAllBkBoardDto() {
+    void success_1st_case_getAllBkBoardDto() {
         //given
         int page = 0;
-        Long memberId = 1L;
-
         Member member = new Member();
-        member.setId(memberId);
+        member.setId(1L);
         member.setMemberId("testUser");
         member.setNickname("testNick");
-        member.setPassword("password");
+        member.setPassword(passwordEncoder.encode("password"));
 
         List<BkBoard> bkBoardList = new ArrayList<>();
-        BkBoard bkBoard = BkBoard.builder()
-                .postId(1L)
-                .member(member).build();
-        bkBoardList.add(bkBoard);
+        for(int i = 1; i <= 5; i++) {
+            BkBoard bkBoard = BkBoard.builder()
+                    .postId((long) i)
+                    .category("etc")
+                    .title("title")
+                    .content("content")
+                    .member(member)
+                    .completion(0)
+                    .share(0)
+                    .build();
+            bkBoardList.add(bkBoard);
+        };
 
         member.setBkBoardList(bkBoardList);
 
+        Pageable pageRequest = PageRequest.of(page, 10, Sort.by("postId").descending());
+        Page<BkBoard> pageResult = new PageImpl<BkBoard>(bkBoardList, pageRequest, 5);
+        List<BkBoard> bkListResult = pageResult.getContent();
+
         //stub
+        when(bkBoardRepository.findAllByMemberId(member.getId(), pageRequest)).thenReturn(pageResult);
 
         //when
         ResponseEntity<List<BkBoard>> responseEntity = bkBoardService.getAllBkBoardDto(page, member);
 
         //then
         assertEquals(200, responseEntity.getStatusCodeValue());
+        assertEquals(1, responseEntity.getBody().get(0).getPostId());
+        assertEquals(2, responseEntity.getBody().get(1).getPostId());
+        assertEquals(5, responseEntity.getBody().get(4).getPostId());
 
         //verify
+        verify(bkBoardRepository, times(1)).findAllByMemberId(member.getId(), pageRequest);
+    }
+
+    @Test
+    void success_2st_case_getAllBkBoardDto() {
+        //given
+        int page = 0;
+        List<BkBoard> bkBoardList = new ArrayList<>();
+        Member member = new Member();
+        member.setId(1L);
+        member.setMemberId("testUser");
+        member.setNickname("testNick");
+        member.setPassword(passwordEncoder.encode("password"));
+        member.setBkBoardList(bkBoardList);
+
+        Pageable pageRequest = PageRequest.of(page, 10, Sort.by("postId").descending());
+        Page<BkBoard> pageResult = new PageImpl<BkBoard>(bkBoardList, pageRequest, 0);
+        List<BkBoard> bkListResult = pageResult.getContent();
+
+        //stub
+        when(bkBoardRepository.findAllByMemberId(member.getId(), pageRequest)).thenReturn(pageResult);
+
+        //when
+        ResponseEntity<List<BkBoard>> responseEntity = bkBoardService.getAllBkBoardDto(page, member);
+
+        //then
+        assertEquals(200, responseEntity.getStatusCodeValue());
+        assertNull(responseEntity.getBody());
+
+        //verify
+        verify(bkBoardRepository, times(1)).findAllByMemberId(member.getId(), pageRequest);
+    }
+
+    @Test
+    void fail_getAllBkBoardDto_cause_pageNum() {
+        //given
+        int page = 1;
+        Member member = new Member();
+        member.setId(1L);
+        member.setMemberId("testUser");
+        member.setNickname("testNick");
+        member.setPassword(passwordEncoder.encode("password"));
+
+        List<BkBoard> bkBoardList = new ArrayList<>();
+        for(int i = 1; i <= 5; i++) {
+            BkBoard bkBoard = BkBoard.builder()
+                    .postId((long) i)
+                    .category("etc")
+                    .title("title")
+                    .content("content")
+                    .member(member)
+                    .completion(0)
+                    .share(0)
+                    .build();
+            bkBoardList.add(bkBoard);
+        };
+
+        member.setBkBoardList(bkBoardList);
+
+        Pageable pageRequest = PageRequest.of(page, 10, Sort.by("postId").descending());
+
+        //stub
+        when(bkBoardRepository.findAllByMemberId(member.getId(), pageRequest)).thenReturn(Page.empty());
+
+        //when
+        ResponseEntity<List<BkBoard>> responseEntity = bkBoardService.getAllBkBoardDto(page, member);
+
+        //then
+        assertEquals(200, responseEntity.getStatusCodeValue());
+        assertNull(responseEntity.getBody());
+
+        //verify
+        verify(bkBoardRepository, times(1)).findAllByMemberId(member.getId(), pageRequest);
+    }
+
+    @Test
+    void fail_getAllBkBoardDto_cause_member() {
+        //given
+        int page = 1;
+        Member member = new Member();
+        member.setId(1L);
+        member.setMemberId("testUser");
+        member.setNickname("testNick");
+        member.setPassword(passwordEncoder.encode("password"));
+
+        Member member2 = new Member();
+        member.setId(1L);
+        member.setMemberId("testUser");
+        member.setNickname("testNick");
+        member.setPassword(passwordEncoder.encode("password"));
+
+        List<BkBoard> bkBoardList = new ArrayList<>();
+        for(int i = 1; i <= 5; i++) {
+            BkBoard bkBoard = BkBoard.builder()
+                    .postId((long) i)
+                    .category("etc")
+                    .title("title")
+                    .content("content")
+                    .member(member2)
+                    .completion(0)
+                    .share(0)
+                    .build();
+            bkBoardList.add(bkBoard);
+        };
+
+        member.setBkBoardList(bkBoardList);
+
+        Pageable pageRequest = PageRequest.of(page, 10, Sort.by("postId").descending());
+
+        //stub
+        when(bkBoardRepository.findAllByMemberId(member.getId(), pageRequest)).thenReturn(Page.empty());
+
+        //when
+        ResponseEntity<List<BkBoard>> responseEntity = bkBoardService.getAllBkBoardDto(page, member);
+
+        //then
+        assertEquals(200, responseEntity.getStatusCodeValue());
+        assertNull(responseEntity.getBody());
+
+        //verify
+        verify(bkBoardRepository, times(1)).findAllByMemberId(member.getId(), pageRequest);
     }
 
     @Test
