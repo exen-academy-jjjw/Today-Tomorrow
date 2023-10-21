@@ -63,6 +63,8 @@ CustomExceptionHandler에는 아무런 문제가 없었다.
 <strong>문제 상황</strong> :    
 테스트를 하며 member 객체에 List<BkBoard>값을 넣어주었음에도 불구하고 bkBoardPage 값이 null로 반환되는 상황
 
+<br>
+
 <strong>시도해본 해결법</strong> :  
 구글링 결과 Pageable객체를 given에서 따로 설정을 해줘야 한다는 설명을 발견했다.  
 
@@ -72,9 +74,32 @@ CustomExceptionHandler에는 아무런 문제가 없었다.
 그 이유는 List<Board>에는 member필드가 존재하고 이를 채워준 다음에 member에 게시글 리스트 객체를 담아주기 위함이었다.  
 이후, Pageable과 Page<BkBoard> 역시 각각 따로 만들어주고 테스트를 진행했다.
 
+<br>
+
 <strong>결론</strong> :  
 이 해결법이 정답이었다.  
 아무래도 서비스단을 살펴본 다음, 기본적으로 준비되어야할 모든 객체를 given에서 작성해줘야 하는 듯하다.
 
 </p>
+</details>
+
+<details>
+<summary>3. MypageService 유닛 테스트 중 passwordEncoder.encode 적용 안 됨</summary>
+<p>
+
+<strong>문제 상황</strong> :  
+![img.png](img/img_7.png)  
+분명히 passwordEncoder.encode를 사용해 비밀번호를 세팅해줬음에도 불구하고 결과값이 null로 반환되는 것이 확인되었다.  
+원인을 찾아보니 Member 클래스 내부, password 필드에 @JsonIgnore 처리가 되어있기 때문이었다.  
+
+<br>
+
+<strong>시도해본 해결법</strong> :  
+1. @JsonIgnoreTest 어노테이션 생성  
+@JsonIgnore 어노테이션이 테스트 시에만 무시되도록 해야겠다는 생각이 들었다.  
+@JsonIgnoreTest 라는 어노테이션(@JsonIgnore 어노테이션을 무시)을 새로 만들어 적용해봤으나...  
+어노테이션을 사용하는 위치가 잘못된 것인지 영속성 에러가 발생하며 테스트가 진행되지 못했다.
+
+</p>
+
 </details>
