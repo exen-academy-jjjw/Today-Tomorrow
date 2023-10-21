@@ -60,8 +60,21 @@ CustomExceptionHandler에는 아무런 문제가 없었다.
 <summary>2. BkBoardService 유닛 테스트 중 페이징 처리 테스트 관련</summary>
 <p>
 
-<strong>문제 상황 :</strong>  
+<strong>문제 상황</strong> :    
 테스트를 하며 member 객체에 List<BkBoard>값을 넣어주었음에도 불구하고 bkBoardPage 값이 null로 반환되는 상황
+
+<strong>시도해본 해결법</strong> :  
+구글링 결과 Pageable객체를 given에서 따로 설정을 해줘야 한다는 설명을 발견했다.  
+
+![img.png](img/img_6.png)  
+설명에 따라 given 영역을 다시 설정했다.  
+매개변서로 쓰일 page와, member를 선언했는데 이때 member는 setter를 사용했다.  
+그 이유는 List<Board>에는 member필드가 존재하고 이를 채워준 다음에 member에 게시글 리스트 객체를 담아주기 위함이었다.  
+이후, Pageable과 Page<BkBoard> 역시 각각 따로 만들어주고 테스트를 진행했다.
+
+<strong>결론</strong> :  
+이 해결법이 정답이었다.  
+아무래도 서비스단을 살펴본 다음, 기본적으로 준비되어야할 모든 객체를 given에서 작성해줘야 하는 듯하다.
 
 </p>
 </details>
