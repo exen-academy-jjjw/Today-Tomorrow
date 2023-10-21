@@ -89,8 +89,11 @@ CustomExceptionHandler에는 아무런 문제가 없었다.
 
 <strong>문제 상황</strong> :  
 ![img.png](img/img_7.png)  
-분명히 passwordEncoder.encode를 사용해 비밀번호를 세팅해줬음에도 불구하고 결과값이 null로 반환되는 것이 확인되었다.  
-원인을 찾아보니 Member 클래스 내부, password 필드에 @JsonIgnore 처리가 되어있기 때문이었다.  
+~~분명히 passwordEncoder.encode를 사용해 비밀번호를 세팅해줬음에도 불구하고 결과값이 null로 반환되는 것이 확인되었다.  
+원인을 찾아보니 Member 클래스 내부, password 필드에 @JsonIgnore 처리가 되어있기 때문이었다.~~
+
+![img.png](img/img_8.png)  
+출력문을 통해 다시 확인해보니 passwordEncoder.encode 자체가 동작을 안 하는 것 같다.
 
 <br>
 
@@ -99,6 +102,18 @@ CustomExceptionHandler에는 아무런 문제가 없었다.
 @JsonIgnore 어노테이션이 테스트 시에만 무시되도록 해야겠다는 생각이 들었다.  
 @JsonIgnoreTest 라는 어노테이션(@JsonIgnore 어노테이션을 무시)을 새로 만들어 적용해봤으나...  
 어노테이션을 사용하는 위치가 잘못된 것인지 영속성 에러가 발생하며 테스트가 진행되지 못했다.
+
+2. @SpringBootTest, @Autowired 어노테이션을 통한 의존성 주입
+@Autowired을 사용해 PasswordEncoder 의존성 주입을 하기 위해 클래스에 @SpringBootTest 어노테이션을 추가했다.  
+그리고 실행해본 결과...  
+![img.png](img/img_8.png)  
+PasswordEncoder가 동작한다!
+
+<br>
+
+<strong>결론</strong> :  
+PasswordEncoder는 인터페이스이기 때문에 @InjectMocks 어노테이션을 사용할 수 없다.  
+그렇다면 직접적으로 의존성을 주입해주는 수밖에는 없고, 유닛 테스트에서 @Autowired를 사용하려면 클래스 자체에 @SpringBootTest 어노테이션을 추가해줘야 한다.
 
 </p>
 
