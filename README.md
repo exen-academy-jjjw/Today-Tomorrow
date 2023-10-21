@@ -115,6 +115,11 @@ PasswordEncoder가 동작한다!
 PasswordEncoder는 인터페이스이기 때문에 @InjectMocks 어노테이션을 사용할 수 없다.  
 그렇다면 직접적으로 의존성을 주입해주는 수밖에는 없고, 유닛 테스트에서 @Autowired를 사용하려면 클래스 자체에 @SpringBootTest 어노테이션을 추가해줘야 한다.
 
+---
+
+<strong>문제 상황</strong> :  
+passwordEncoder.matches에서 동작을 안 한다...
+
 </p>
 
 </details>

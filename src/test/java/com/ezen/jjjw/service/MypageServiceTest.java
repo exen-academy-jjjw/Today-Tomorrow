@@ -12,6 +12,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -34,6 +36,7 @@ import static org.mockito.Mockito.*;
  * 2023-10-19        sonjia       최초 생성
  */
 @ExtendWith(MockitoExtension.class)
+@SpringBootTest
 public class MypageServiceTest {
 
     @InjectMocks
@@ -45,8 +48,8 @@ public class MypageServiceTest {
     @Mock
     private BkBoardRepository bkBoardRepository;
 
-    @Mock
-    private PasswordEncoder passwordEncoder;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Test
     void success_getFindMember() {
@@ -178,6 +181,7 @@ public class MypageServiceTest {
     void success_updatePassword() throws JsonProcessingException {
         //given
         MypageRequestDto requestDto = new MypageRequestDto();
+        requestDto.setNickname("testNick");
         requestDto.setPassword("password");
         requestDto.setNewPassword("updatePassword");
 
@@ -188,13 +192,16 @@ public class MypageServiceTest {
                 .password(passwordEncoder.encode("password"))
                 .build();
 
-        System.out.println("패스워드 확인 : " + member.getPassword());
         //stub
+        when(memberRepository.save(member)).thenReturn(new Member());
 
         //when
+        ResponseEntity<Integer> responseEntity = mypageService.updatePassword(requestDto, member);
 
         //then
+        assertEquals(200, responseEntity.getStatusCodeValue());
 
         //verify
+//        verify(memberRepository, times(1)).save(member);
     }
 }
