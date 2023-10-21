@@ -9,6 +9,7 @@ import com.ezen.jjjw.repository.BkBoardRepository;
 import com.ezen.jjjw.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -46,13 +47,15 @@ public class MypageService {
     //닉네임 변경
     @Transactional
     public ResponseEntity<Integer> updateNick(MypageRequestDto request, Member member) {
-        customExceptionHandler.getNotFoundMemberStatus(member);
+        if(member == null) {
+            log.info("존재하지 않는 사용자");
+            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
+        }
 
         try {
             Optional<Member> byNickname = memberRepository.findByNickname(request.getNickname());
             if(byNickname.isPresent()) {
                 log.info("닉네임 중복");
-//                return customExceptionHandler.getMatchMemberNickname();\
                 return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
             }
         } catch(Exception e) {
@@ -68,7 +71,11 @@ public class MypageService {
 
     @Transactional
     public ResponseEntity<Integer> updatePassword(MypageRequestDto request, Member member) {
-        customExceptionHandler.getNotFoundMemberStatus(member);
+        if(member == null) {
+            log.info("존재하지 않는 사용자");
+            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
+        }
+
         String oldPassword = member.getPassword();
 
         if(!passwordEncoder.matches(request.getPassword(), oldPassword)){
