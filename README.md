@@ -106,7 +106,7 @@ CustomExceptionHandler에는 아무런 문제가 없었다.
 2. @SpringBootTest, @Autowired 어노테이션을 통한 의존성 주입
 @Autowired을 사용해 PasswordEncoder 의존성 주입을 하기 위해 클래스에 @SpringBootTest 어노테이션을 추가했다.  
 그리고 실행해본 결과...  
-![img.png](img/img_8.png)  
+![img.png](img/img_9.png)  
 PasswordEncoder가 동작한다!
 
 <br>
@@ -118,7 +118,20 @@ PasswordEncoder는 인터페이스이기 때문에 @InjectMocks 어노테이션�
 ---
 
 <strong>문제 상황</strong> :  
-passwordEncoder.matches에서 동작을 안 한다...
+passwordEncoder.matches가 동작을 안 한다...  
+정확히는 updatePassword 메서드 내부 로직인
+
+```java
+if(!passwordEncoder.matches(request.getPassword(), oldPassword)){
+    log.info("비밀번호 불일치");
+    return ResponseEntity.ok(HttpServletResponse.SC_BAD_REQUEST);
+}
+```
+에서 조건문이 동작을 안 한다.  
+디버깅을 돌려본 결과,
+![img.png](img/img_10.png)  
+위와 같이 passwordEncoder 자체가 null인 것으로 확인되었다.
+돌고 돌아 다시 의존성 주입 문제...
 
 </p>
 
