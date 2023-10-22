@@ -7,9 +7,9 @@ import com.ezen.jjjw.dto.response.MypageResponseDto;
 import com.ezen.jjjw.repository.BkBoardRepository;
 import com.ezen.jjjw.repository.MemberRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 /**
@@ -37,9 +38,9 @@ import static org.mockito.Mockito.*;
  */
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
-public class MypageServiceTest {
+//@RunWith(SpringRunner.class)
+class MypageServiceTest {
 
-    @InjectMocks
     private MypageService mypageService;
 
     @Mock
@@ -50,6 +51,11 @@ public class MypageServiceTest {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @BeforeEach
+    public void setUp() {
+        mypageService = new MypageService(memberRepository, passwordEncoder, bkBoardRepository);
+    }
 
     @Test
     void success_getFindMember() {
@@ -178,7 +184,7 @@ public class MypageServiceTest {
     }
 
     @Test
-    void success_updatePassword() throws JsonProcessingException {
+    void success_updatePassword() {
         //given
         MypageRequestDto requestDto = new MypageRequestDto();
         requestDto.setNickname("testNick");
@@ -193,15 +199,39 @@ public class MypageServiceTest {
                 .build();
 
         //stub
-        when(memberRepository.save(member)).thenReturn(new Member());
+        when(memberRepository.save(member)).thenReturn(any(Member.class));
 
         //when
         ResponseEntity<Integer> responseEntity = mypageService.updatePassword(requestDto, member);
 
         //then
         assertEquals(200, responseEntity.getStatusCodeValue());
+        assertEquals(200, responseEntity.getBody());
 
         //verify
-//        verify(memberRepository, times(1)).save(member);
+        verify(memberRepository, times(1)).save(member);
+    }
+
+    @Test
+    void fail_updatePassword_cause_member() {
+        //given
+        MypageRequestDto requestDto = new MypageRequestDto();
+        requestDto.setNickname("testNick");
+        requestDto.setPassword("badPassword");
+        requestDto.setNewPassword("updatePassword");
+
+        Member member = Member.builder()
+                .id(1L)
+                .memberId("testUser")
+                .nickname("testNick")
+                .password(passwordEncoder.encode("password"))
+                .build();
+
+        //when
+        ResponseEntity<Integer> responseEntity = mypageService.updatePassword(requestDto, member);
+
+        //then
+        assertEquals(200, responseEntity.getStatusCodeValue());
+        assertEquals(400, responseEntity.getBody());
     }
 }
