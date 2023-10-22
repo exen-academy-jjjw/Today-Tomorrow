@@ -184,7 +184,7 @@ class MypageServiceTest {
     }
 
     @Test
-    void success_updatePassword() throws JsonProcessingException {
+    void success_updatePassword() {
         //given
         MypageRequestDto requestDto = new MypageRequestDto();
         requestDto.setNickname("testNick");
@@ -199,13 +199,39 @@ class MypageServiceTest {
                 .build();
 
         //stub
+        when(memberRepository.save(member)).thenReturn(any(Member.class));
 
         //when
         ResponseEntity<Integer> responseEntity = mypageService.updatePassword(requestDto, member);
 
         //then
         assertEquals(200, responseEntity.getStatusCodeValue());
+        assertEquals(200, responseEntity.getBody());
 
         //verify
+        verify(memberRepository, times(1)).save(member);
+    }
+
+    @Test
+    void fail_updatePassword_cause_member() {
+        //given
+        MypageRequestDto requestDto = new MypageRequestDto();
+        requestDto.setNickname("testNick");
+        requestDto.setPassword("badPassword");
+        requestDto.setNewPassword("updatePassword");
+
+        Member member = Member.builder()
+                .id(1L)
+                .memberId("testUser")
+                .nickname("testNick")
+                .password(passwordEncoder.encode("password"))
+                .build();
+
+        //when
+        ResponseEntity<Integer> responseEntity = mypageService.updatePassword(requestDto, member);
+
+        //then
+        assertEquals(200, responseEntity.getStatusCodeValue());
+        assertEquals(400, responseEntity.getBody());
     }
 }
