@@ -4,13 +4,13 @@ import com.ezen.jjjw.domain.entity.Member;
 import com.ezen.jjjw.dto.request.MypageRequestDto;
 import com.ezen.jjjw.dto.response.MypageResponseDto;
 import com.ezen.jjjw.exception.CustomExceptionHandler;
-import com.ezen.jjjw.jwt.TokenProvider;
 import com.ezen.jjjw.repository.BkBoardRepository;
 import com.ezen.jjjw.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +26,6 @@ public class MypageService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final BkBoardRepository bkBoardRepository;
-    private final CustomExceptionHandler customExceptionHandler;
 
     //맴버 정보 조회
     @Transactional

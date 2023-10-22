@@ -7,9 +7,9 @@ import com.ezen.jjjw.dto.response.MypageResponseDto;
 import com.ezen.jjjw.repository.BkBoardRepository;
 import com.ezen.jjjw.repository.MemberRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 /**
@@ -37,9 +38,9 @@ import static org.mockito.Mockito.*;
  */
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
-public class MypageServiceTest {
+//@RunWith(SpringRunner.class)
+class MypageServiceTest {
 
-    @InjectMocks
     private MypageService mypageService;
 
     @Mock
@@ -50,6 +51,11 @@ public class MypageServiceTest {
 
     @Autowired
     PasswordEncoder passwordEncoder;
+
+    @BeforeEach
+    public void setUp() {
+        mypageService = new MypageService(memberRepository, passwordEncoder, bkBoardRepository);
+    }
 
     @Test
     void success_getFindMember() {
@@ -193,7 +199,6 @@ public class MypageServiceTest {
                 .build();
 
         //stub
-        when(memberRepository.save(member)).thenReturn(new Member());
 
         //when
         ResponseEntity<Integer> responseEntity = mypageService.updatePassword(requestDto, member);
@@ -202,6 +207,5 @@ public class MypageServiceTest {
         assertEquals(200, responseEntity.getStatusCodeValue());
 
         //verify
-//        verify(memberRepository, times(1)).save(member);
     }
 }
