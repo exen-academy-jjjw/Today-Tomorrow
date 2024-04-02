@@ -42,9 +42,8 @@ import java.util.*;
 public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final BkBoardRepository bkBoardRepository;
-    private final FileRepository fileRepository;
 
-    private final S3Uploader amazonS3Service;
+    private final ImageService imageService;
     private final CustomExceptionHandler customExceptionHandler;
 
     // 리뷰 게시글 작성 POST /review/create/{postId}
@@ -68,19 +67,9 @@ public class ReviewService {
         reviewRepository.save(review);
         log.info("리뷰 작성 성공");
 
-        List<String> imageUrlList;
-        imageUrlList = amazonS3Service.upload(multipartFiles, "bucket");
-        List<ReviewFile> saveImages = new ArrayList<>();
-        for(String fileUrl : imageUrlList){
-            ReviewFile image = ReviewFile.builder()
-                    .review(review)
-                    .fileUrl(fileUrl)
-                    .build();
-            saveImages.add(image);
-        }
+        // ImageService를 사용하여 이미지 파일 처리
+        List<String> imageUrlList = imageService.uploadImages(multipartFiles, "bucket", review);
 
-        fileRepository.saveAll(saveImages);
-        log.info("파일 저장 성공");
         return ResponseEntity.ok(HttpServletResponse.SC_OK);
     }
 
@@ -93,50 +82,23 @@ public class ReviewService {
 
     // 리뷰 게시글 상세 GET /review/detail/{postId}
     @Transactional(readOnly = true)
-    public ResponseEntity<?> findByPostId(Long postId) {
+    public ResponseEntity<?> findReviewByPostId(Long postId) {
 
         BkBoard bkBoard = isPresentPost(postId);
         customExceptionHandler.getNotFoundBoardStatus(bkBoard);
 
         customExceptionHandler.getNotFoundReviewStatusOrgetReview(bkBoard);
         Review findReview = bkBoard.getReview();
-
-        List<ReviewFile> reviewFIle = fileRepository.findAllByReviewId(findReview.getId());
-
-        List<String> imageList = new ArrayList<>();
-        for (ReviewFile image : reviewFIle) {
-            imageList.add(image.getFileUrl());
-        }
+        List<String> imageUrls = imageService.findImageUrlsByReviewId(findReview.getId());
 
         ReviewResponseDto reviewResponseDto = ReviewResponseDto.builder()
                 .id(findReview.getId())
                 .postId(findReview.getBkBoard().getPostId())
-                .fileUrlList(imageList)
+                .fileUrlList(imageUrls)
                 .reviewContent(findReview.getReviewContent())
                 .createdAt(findReview.getCreatedAt())
                 .modifiedAt(findReview.getModifiedAt())
                 .build();
-
-        // file
-        List<ReviewFile> allReviewFiles = fileRepository.findByReviewIdOrderByModifiedAtDesc(findReview.getId());
-
-        if (null == allReviewFiles) {
-            log.info("존재하지 않는 파일");
-            return ResponseEntity.ok(HttpServletResponse.SC_NOT_FOUND);
-        }
-
-        List<FileResponseDto> ReviewResponseDtoList = new ArrayList<>();
-        for (ReviewFile reviewFile : allReviewFiles) {
-            ReviewResponseDtoList.add(
-                    FileResponseDto.builder()
-                            .id(reviewFile.getId())
-                            .reviewId(reviewFile.getReview().getId())
-                            .fileUrl(reviewFile.getFileUrl())
-                            .createdAt(reviewFile.getCreatedAt())
-                            .modifiedAt(reviewFile.getModifiedAt())
-                            .build()
-            );
-        }
 
         return ResponseEntity.ok(reviewResponseDto);
     }
@@ -158,39 +120,8 @@ public class ReviewService {
         reviewRepository.save(findReview.getBkBoard().getReview());
         log.info("리뷰 수정 성공");
 
-        // 게시글로부터 타고 들어가 뽑아온 리뷰 파일 리스트
-        List<ReviewFile> reviewFileList = bkBoard.getReview().getReviewFileList();
-
-        // file 관련 코드
-        // 사용자로부터 받은 파일이 null이 아닐 경우에만 다음 로직 실행
-        if (multipartFiles != null && !multipartFiles.isEmpty()) {
-            // 사용자가 새로 보내는 사진 중에 위와 겹치는 게 없다면 해당 파일은 저장
-            for (MultipartFile newFile : multipartFiles) {
-                // 새로 보내는 파일이 DB에 이미 존재하는지 확인
-                boolean existsInDB = false;
-                for (ReviewFile oriFile : reviewFileList) {
-                    if (oriFile.getFileUrl().equals(newFile)) {
-                        existsInDB = true;
-                        break;
-                    }
-                }
-                // DB에 없는 파일만 저장
-                if (!existsInDB) {
-                    List<String> imageUrlList;
-                    imageUrlList = amazonS3Service.upload(multipartFiles, "bucket");
-                    List<ReviewFile> saveImages = new ArrayList<>();
-                    for (String fileUrl : imageUrlList) {
-                        ReviewFile image = ReviewFile.builder()
-                                .review(findReview)
-                                .fileUrl(fileUrl)
-                                .build();
-                        saveImages.add(image);
-                    }
-                    fileRepository.saveAll(saveImages);
-                }
-            }
-        }
-        log.info("파일 수정 성공");
+        // ImageService를 사용하여 리뷰와 관련된 이미지 업데이트
+        imageService.updateImagesForReview(findReview.getId(), multipartFiles, findReview);
 
         return ResponseEntity.ok(HttpServletResponse.SC_OK);
     }
@@ -208,18 +139,7 @@ public class ReviewService {
         reviewRepository.delete(findReview);
         log.info("리뷰 삭제 성공");
 
-        // 게시글로부터 타고 들어가 뽑아온 리뷰 파일 리스트
-        List<ReviewFile> reviewFileList = bkBoard.getReview().getReviewFileList();
-
-        // DB 속의 리뷰 파일 리스트와 사용자로부터 받은 파일 리스트의 파일명 비교
-        for (ReviewFile oriFile : reviewFileList) {
-            log.info("파일 = {}",oriFile.getFileUrl());
-            // S3저장소에서 삭제
-            String name = URLDecoder.decode(oriFile.getFileUrl().substring(oriFile.getFileUrl().lastIndexOf("/") + 1), StandardCharsets.UTF_8);
-            amazonS3Service.deleteFile("bucket/" + name);
-            // DB 이미지 삭제
-            fileRepository.delete(oriFile);
-        }
+        imageService.deleteImagesByReviewId(findReview.getId());
 
         bkBoard.deleteExistReview(bkBoard);
         bkBoardRepository.save(bkBoard);
@@ -228,4 +148,3 @@ public class ReviewService {
         return ResponseEntity.ok(HttpServletResponse.SC_OK);
     }
 }
-
