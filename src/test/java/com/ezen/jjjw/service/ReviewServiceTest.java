@@ -58,16 +58,13 @@ class ReviewServiceTest {
     void createReview() throws IOException {
         // given
         Long postId = 1L;
+        BkBoard mockBoard = Mockito.mock(BkBoard.class);;
+
         String reviewTxt = "리뷰1";
-        BkBoard mockbkBoard = new BkBoard();
-
-        ReviewRequestDto reviewReqDto = new ReviewRequestDto();
-        reviewReqDto.setReviewContent(reviewTxt);
-
         List<MultipartFile> mockMultipartFiles = Collections.emptyList();
         List<String> mockImageUrls = new ArrayList<>();
 
-        when(bkBoardRepository.findById(postId)).thenReturn(Optional.of(mockbkBoard));
+        when(bkBoardRepository.findById(postId)).thenReturn(Optional.of(mockBoard));
         when(reviewRepository.save(any())).thenReturn(new Review());
         when(imageService.uploadImages(anyList(), anyString(), any())).thenReturn(mockImageUrls);
 
@@ -84,19 +81,19 @@ class ReviewServiceTest {
     void findReviewByPostId() {
         // given
         Long postId = 1L;
-        String reviewTxt = "리뷰1";
+        BkBoard mockBoard = Mockito.mock(BkBoard.class);
 
-        BkBoard mockbkBoard = Mockito.mock(BkBoard.class);
-        Review mockreview = Review.builder()
+        String reviewTxt = "리뷰1";
+        Review review = Review.builder()
                 .id(1L)
-                .bkBoard(mockbkBoard)
+                .bkBoard(mockBoard)
                 .reviewContent(reviewTxt)
                 .build();
         List<String> mockImageUrls = new ArrayList<>();
 
-        when(bkBoardRepository.findById(postId)).thenReturn(Optional.of(mockbkBoard));
-        when(mockbkBoard.getReview()).thenReturn(mockreview);
-        when(imageService.findImageUrlsByReviewId(mockreview.getId())).thenReturn(mockImageUrls);
+        when(bkBoardRepository.findById(postId)).thenReturn(Optional.of(mockBoard));
+        when(mockBoard.getReview()).thenReturn(review);
+        when(imageService.findImageUrlsByReviewId(review.getId())).thenReturn(mockImageUrls);
 
         // when
         ResponseEntity<?> response = reviewService.findReviewByPostId(postId);
@@ -106,46 +103,60 @@ class ReviewServiceTest {
         assertTrue(response.getBody() instanceof ReviewResponseDto);
 
         ReviewResponseDto responseBody = (ReviewResponseDto) response.getBody();
-        assertNotNull(responseBody);
-        assertEquals(mockreview.getReviewContent(), responseBody.getReviewContent());
+        assertEquals(review.getReviewContent(), responseBody.getReviewContent());
     }
 
-    // TODO update test 수정
     @Test
     void updateSave() throws IOException {
         // given
         Long postId = 1L;
+        BkBoard mockBoard = Mockito.mock(BkBoard.class);
+
+        String reviewTxt = "리뷰1";
         String updatedTxt = "리뷰 수정";
+        Review review = Review.builder()
+                .id(1L)
+                .bkBoard(mockBoard)
+                .reviewContent(reviewTxt)
+                .build();
+
         ReviewRequestDto requestDto = new ReviewRequestDto();
         requestDto.setReviewContent(updatedTxt);
         List<MultipartFile> mockMultipartFiles = Collections.emptyList();
 
-        BkBoard mockbkBoard = Mockito.mock(BkBoard.class);
-        Review mockreview = Mockito.mock(Review.class);
-
-        when(bkBoardRepository.findById(postId)).thenReturn(Optional.of(mockbkBoard));
-        when(mockbkBoard.getReview()).thenReturn(mockreview);
-        when(reviewRepository.save(any())).thenReturn(mockreview);
+        when(bkBoardRepository.findById(postId)).thenReturn(Optional.of(mockBoard));
+        when(mockBoard.getReview()).thenReturn(review);
+        when(reviewRepository.save(any())).thenReturn(review);
 
         // When
         ResponseEntity<?> response = reviewService.updateSave(postId, requestDto, mockMultipartFiles);
 
         // Then
         assertEquals(ResponseEntity.ok(HttpServletResponse.SC_OK).getStatusCode(), response.getStatusCode());
+        assertEquals(updatedTxt, review.getReviewContent(), updatedTxt);
 
-        verify(mockreview).update(updatedTxt);
-        verify(reviewRepository).save(mockreview);
-        verify(imageService).updateImagesForReview(eq(mockreview.getId()), eq(mockMultipartFiles), eq(mockreview));
+        verify(reviewRepository).save(review);
+        verify(imageService).updateImagesForReview(eq(review.getId()), eq(mockMultipartFiles), eq(review));
     }
 
-    // TODO delete test 작성
     @Test
     void deleteByReviewId() {
         // given
+        Long postId = 1L;
+        BkBoard mockBoard = Mockito.mock(BkBoard.class);
+        Review mockReview = Mockito.mock(Review.class);
+
+        when(bkBoardRepository.findById(postId)).thenReturn(Optional.of(mockBoard));
+        when(mockBoard.getReview()).thenReturn(mockReview);
+        when(mockReview.getId()).thenReturn(1L);
 
         // when
+        ResponseEntity<Integer> response = reviewService.deleteByReviewId(postId);
 
         // then
-
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        verify(reviewRepository).delete(mockReview);
+        verify(imageService).deleteImagesByReviewId(mockReview.getId());
+        verify(bkBoardRepository).save(mockBoard);
     }
 }
