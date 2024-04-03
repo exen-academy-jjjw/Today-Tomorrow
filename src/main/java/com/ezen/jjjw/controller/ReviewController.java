@@ -42,7 +42,7 @@ public class ReviewController {
     // 리뷰 게시글 상세 GET /review/detail/{postId}
     @GetMapping(value = "/detail/{postId}")
     public ResponseEntity<?> detailReview(@PathVariable Long postId) {
-        return reviewService.findByPostId(postId);
+        return reviewService.findReviewByPostId(postId);
     }
 
     // 리뷰 게시글 수정 PUT /review/update/{postId}
