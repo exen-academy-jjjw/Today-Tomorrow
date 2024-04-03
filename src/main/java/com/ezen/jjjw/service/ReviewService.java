@@ -2,13 +2,10 @@ package com.ezen.jjjw.service;
 
 import com.ezen.jjjw.domain.entity.BkBoard;
 import com.ezen.jjjw.domain.entity.Review;
-import com.ezen.jjjw.domain.entity.ReviewFile;
 import com.ezen.jjjw.dto.request.ReviewRequestDto;
-import com.ezen.jjjw.dto.response.FileResponseDto;
 import com.ezen.jjjw.dto.response.ReviewResponseDto;
 import com.ezen.jjjw.exception.CustomExceptionHandler;
 import com.ezen.jjjw.repository.BkBoardRepository;
-import com.ezen.jjjw.repository.FileRepository;
 import com.ezen.jjjw.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,8 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 /**
@@ -144,7 +139,6 @@ public class ReviewService {
         bkBoard.deleteExistReview(bkBoard);
         bkBoardRepository.save(bkBoard);
 
-        log.info("이미지 삭제 성공");
         return ResponseEntity.ok(HttpServletResponse.SC_OK);
     }
 }

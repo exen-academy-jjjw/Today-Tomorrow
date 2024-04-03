@@ -2,7 +2,6 @@ package com.ezen.jjjw.service;
 
 import com.ezen.jjjw.domain.entity.Review;
 import com.ezen.jjjw.domain.entity.ReviewFile;
-import com.ezen.jjjw.exception.CustomExceptionHandler;
 import com.ezen.jjjw.repository.FileRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -69,16 +68,12 @@ public class ImageService {
 
     @Transactional
     public void updateImagesForReview(Long reviewId, List<MultipartFile> newImages, Review review) throws IOException {
-        // 기존 이미지 삭제
-        deleteImagesByReviewId(reviewId);
-
-        // 새 이미지 업로드
+        // 이미지 추가
         if (newImages != null && !newImages.isEmpty()) {
             // 업로드된 이미지 정보를 바탕으로 ReviewFile 엔티티 생성 및 저장
             uploadImages(newImages, "bucket", review);
         }
     }
-
 
     @Transactional
     public void deleteImagesByReviewId(Long reviewId) {
@@ -91,5 +86,6 @@ public class ImageService {
             // DB 이미지 삭제
             fileRepository.delete(oriFile);
         }
+        log.info("이미지 삭제 성공");
     }
 }
